@@ -8,9 +8,6 @@ import traceback
 import urllib2
 import urlparse
 
-import ifuzz_logger
-import sex
-
 _DEFAULT_RESET_DELAY = 3.05
 
 HELP_TEXT = (
@@ -87,40 +84,6 @@ class EzOutletReset:
     @property
     def url(self):
         return _get_url(self._hostname, self.RESET_URL_PATH)
-
-    def post_fail(self, logger, *args, **kwargs):
-        """Call reset() and log actions.
-
-        See reset() docstring for details.
-
-        This method will log actions associated with HTTP communication. It
-        assumes that a test step is already opened.
-
-        Args:
-            logger (ifuzz_logger.IFuzzLogger):
-                For logging communications with outlet device.
-            *args: Kept for forward-compatibility.
-            **kwargs: Kept for forward-compatibility.
-
-        Raises:
-            sex.SullyRuntimeError: If the reset fails due to:
-                - no response in self._timeout seconds or
-                - unexpected response contents (see
-                  EzOutletReset.EXPECTED_RESPONSE_CONTENTS)
-        """
-        _ = args  # only for forward-compatibility
-        _ = kwargs  # only for forward-compatibility
-
-        logger.log_info(self.LOG_REQUEST_MSG.format(self.url))
-
-        try:
-            response = self.reset()
-            logger.log_recv(response)
-        except EzOutletResetError as e:
-            logger.log_info(e.message)
-            raise sex.SullyRuntimeError(e.message), \
-                None, \
-                sys.exc_info()[2]
 
     def reset(self):
         """Send reset request to ezOutlet, check response, wait for reset.
