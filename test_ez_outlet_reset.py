@@ -12,7 +12,7 @@ except ImportError:
     # noinspection PyPackageRequirements
     import mock
 
-import ez_outlet_reset
+from ezoutlet import ez_outlet_reset
 
 EXIT_CODE_ERR = 1
 EXIT_CODE_PARSER_ERR = 2
@@ -35,8 +35,8 @@ class TestEzOutletReset(unittest.TestCase):
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
     @mock.patch.object(ez_outlet_reset, '_get_url', return_value=sample_url)
-    @mock.patch('ez_outlet_reset.urllib2')
-    @mock.patch('ez_outlet_reset.time')
+    @mock.patch('ezoutlet.ez_outlet_reset.urllib2')
+    @mock.patch('ezoutlet.ez_outlet_reset.time')
     def test_reset(self, mock_time, mock_urllib2, mock_get_url):
         """
         Given: Mock urllib2 configured such that
@@ -73,8 +73,8 @@ class TestEzOutletReset(unittest.TestCase):
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
     @mock.patch.object(ez_outlet_reset, '_get_url', return_value=sample_url)
-    @mock.patch('ez_outlet_reset.urllib2')
-    @mock.patch('ez_outlet_reset.time')
+    @mock.patch('ezoutlet.ez_outlet_reset.urllib2')
+    @mock.patch('ezoutlet.ez_outlet_reset.time')
     def test_reset_no_response(self, mock_time, mock_urllib2, mock_get_url):
         """
         Given: Mock urllib2 configured to raise urllib2.URLError on urlopen.
@@ -113,8 +113,8 @@ class TestEzOutletReset(unittest.TestCase):
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
     @mock.patch.object(ez_outlet_reset, '_get_url', return_value=sample_url)
-    @mock.patch('ez_outlet_reset.urllib2')
-    @mock.patch('ez_outlet_reset.time')
+    @mock.patch('ezoutlet.ez_outlet_reset.urllib2')
+    @mock.patch('ezoutlet.ez_outlet_reset.time')
     def test_reset_unexpected_response(self, mock_time, mock_urllib2, mock_get_url):
         """
         Given: Mock urllib2 configured such that
@@ -153,8 +153,8 @@ class TestEzOutletReset(unittest.TestCase):
         mock_urllib2.urlopen.assert_called_once_with(self.sample_url, timeout=timeout)
         mock_time.sleep.assert_not_called()
 
-    @mock.patch('ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ez_outlet_reset.EzOutletReset')
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.EzOutletReset')
     def test_main_basic(self, mock_ez_outlet_reset):
         """
         Given: Mock EzOutletReset.
@@ -172,8 +172,8 @@ class TestEzOutletReset(unittest.TestCase):
                                                      wait_time=EZ_OUTLET_RESET_DEFAULT_WAIT_TIME)
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
 
-    @mock.patch('ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ez_outlet_reset.EzOutletReset')
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.EzOutletReset')
     def test_main_reset_time_long(self, mock_ez_outlet_reset):
         """
         Given: Mock EzOutletReset.
@@ -192,8 +192,8 @@ class TestEzOutletReset(unittest.TestCase):
                                                      wait_time=wait_time)
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
 
-    @mock.patch('ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ez_outlet_reset.EzOutletReset')
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.EzOutletReset')
     def test_main_reset_time_short(self, mock_ez_outlet_reset):
         """
         Given: Mock EzOutletReset.
@@ -212,8 +212,8 @@ class TestEzOutletReset(unittest.TestCase):
                                                      wait_time=wait_time)
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
 
-    @mock.patch('ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
     def test_main_missing_target(self):
         """
         Given: Mock EzOutletReset.
@@ -233,8 +233,8 @@ class TestEzOutletReset(unittest.TestCase):
 
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
 
-    @mock.patch('ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
     def test_main_unknown_arg(self, ):
         """
         Given: Mock EzOutletReset.
@@ -255,8 +255,8 @@ class TestEzOutletReset(unittest.TestCase):
                          ez_outlet_reset.sys.stderr.getvalue()) is not None
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
 
-    @mock.patch('ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
     def test_main_reset_time_negative(self):
         """
         Given: Mock EzOutletReset.
@@ -280,8 +280,8 @@ class TestEzOutletReset(unittest.TestCase):
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
-    @mock.patch('ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
     @mock.patch.object(ez_outlet_reset._Parser, 'parse_args',
                        side_effect=ez_outlet_reset.EzOutletResetUsageError(arbitrary_msg_1))
     def test_error_handling_ez_outlet_reset_usage_error(self, mock_parser):
@@ -312,8 +312,8 @@ class TestEzOutletReset(unittest.TestCase):
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
-    @mock.patch('ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
     @mock.patch.object(ez_outlet_reset.EzOutletReset, 'reset',
                        side_effect=ez_outlet_reset.EzOutletResetError(arbitrary_msg_2))
     def test_error_handling_ez_outlet_reset_error(self, mock_ez_outlet_reset):
@@ -344,8 +344,8 @@ class TestEzOutletReset(unittest.TestCase):
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
-    @mock.patch('ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
     @mock.patch.object(ez_outlet_reset.EzOutletReset, 'reset',
                        side_effect=Exception(arbitrary_msg_2))
     def test_error_handling_unhandled_error(self, mock_ez_outlet_reset):
