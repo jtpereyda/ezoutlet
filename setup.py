@@ -37,6 +37,8 @@ setup(
         packages=['ezoutlet'],
         install_requires=['future'],
         extras_require={
-            'dev': ['mock', 'pytest', 'pytest-bdd'],
+            # This list is duplicated in tox.ini. Make sure to change both!
+            # This can stop once tox supports installing package extras.
+            'dev': ['mock', 'pytest'],
         },
 )

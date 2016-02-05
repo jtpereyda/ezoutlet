@@ -1,8 +1,11 @@
-__pycache__/*
+__pycache__/
 *.py[cod]
 
 # Distribution / packaging
 *.egg-info/
+
+# Test tools
+.tox/
 
 # IDEs
 .idea/*
