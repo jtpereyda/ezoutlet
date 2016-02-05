@@ -158,6 +158,7 @@ class TestEzOutletReset(unittest.TestCase):
         mock_time.sleep.assert_not_called()
 
     @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
     @mock.patch('ezoutlet.ez_outlet_reset.EzOutletReset')
     def test_main_basic(self, mock_ez_outlet_reset):
         """
@@ -165,7 +166,9 @@ class TestEzOutletReset(unittest.TestCase):
         When: Calling main() with a single argument.
         Then: EzOutletReset constructor is called with hostname == given value
               and wait_time == ez_outlet_reset.DEFAULT_WAIT_TIME.
+         and: EzOutletReset.reset is called
          and: STDOUT is silent.
+         and: STDERR is silent.
         """
         hostname = '255.254.253.252'
         args = ['ez_outlet_reset.py', hostname]
@@ -173,10 +176,15 @@ class TestEzOutletReset(unittest.TestCase):
         ez_outlet_reset.main(args)
 
         mock_ez_outlet_reset.assert_called_once_with(hostname=hostname,
+                                                     # Duplicate reference to DEFAULT_WAIT_TIME needed because
+                                                     # we mocked away EzOutletReset.
                                                      wait_time=EZ_OUTLET_RESET_DEFAULT_WAIT_TIME)
+        mock_ez_outlet_reset.return_value.reset.assert_called_once_with()
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
+        assert ez_outlet_reset.sys.stderr.getvalue() == ''
 
     @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
     @mock.patch('ezoutlet.ez_outlet_reset.EzOutletReset')
     def test_main_reset_time_long(self, mock_ez_outlet_reset):
         """
@@ -184,7 +192,9 @@ class TestEzOutletReset(unittest.TestCase):
         When: Calling main() with hostname and --reset-time arguments.
         Then: EzOutletReset constructor is called with hostname == given value
               and wait_time == given value.
+         and: EzOutletReset.reset is called
          and: STDOUT is silent.
+         and: STDERR is silent.
         """
         hostname = '255.254.253.252'
         wait_time = 77
@@ -194,9 +204,12 @@ class TestEzOutletReset(unittest.TestCase):
 
         mock_ez_outlet_reset.assert_called_once_with(hostname=hostname,
                                                      wait_time=wait_time)
+        mock_ez_outlet_reset.return_value.reset.assert_called_once_with()
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
+        assert ez_outlet_reset.sys.stderr.getvalue() == ''
 
     @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
     @mock.patch('ezoutlet.ez_outlet_reset.EzOutletReset')
     def test_main_reset_time_short(self, mock_ez_outlet_reset):
         """
@@ -204,7 +217,9 @@ class TestEzOutletReset(unittest.TestCase):
         When: Calling main() with hostname and -t arguments.
         Then: EzOutletReset constructor is called with hostname == given value
               and wait_time == given value.
+         and: EzOutletReset.reset is called
          and: STDOUT is silent.
+         and: STDERR is silent.
         """
         hostname = '255.254.253.252'
         wait_time = 1
@@ -214,7 +229,9 @@ class TestEzOutletReset(unittest.TestCase):
 
         mock_ez_outlet_reset.assert_called_once_with(hostname=hostname,
                                                      wait_time=wait_time)
+        mock_ez_outlet_reset.return_value.reset.assert_called_once_with()
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
+        assert ez_outlet_reset.sys.stderr.getvalue() == ''
 
     @mock.patch('ezoutlet.ez_outlet_reset.sys.stdout', new=StringIO.StringIO())
     @mock.patch('ezoutlet.ez_outlet_reset.sys.stderr', new=StringIO.StringIO())
