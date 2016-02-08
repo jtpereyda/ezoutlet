@@ -32,7 +32,7 @@ setup(
         version=find_version("ezoutlet", "__init__.py"),
         maintainer='Joshua Pereyda',
         maintainer_email='joshua.t.pereyda@gmail.com',
-        url='https://github.com/jtpereyda/boofuzz',
+        url='https://github.com/jtpereyda/ezoutlet',
         license='MIT',
         packages=['ezoutlet'],
         install_requires=['future'],
