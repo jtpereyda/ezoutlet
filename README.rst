@@ -1,7 +1,7 @@
 ezoutlet
 ========
 
-A Python script and API to reseet devices using the ezOutlet EZ-11b.
+A Python script and API to reset devices using the ezOutlet EZ-11b.
 
 Not associated with or endorsed by the creators of ezOutlet.
 
