@@ -1,3 +1,7 @@
+Issues and Bugs
+===============
+If you have a bug report or idea for improvement, please create an issue on GitHub, or a pull request with the fix.
+
 Contributors
 ============
 
