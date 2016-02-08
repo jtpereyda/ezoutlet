@@ -32,7 +32,7 @@ Release Checklist
 
 3. Use :code:`git status` to verify that no superfluous files are present to be included in the source distribution.
 
-4. Increment version number.
+4. Increment version number from last release according to PEP 0440 and roughly according to the Semantic Versioning guidelines.
 
 5. Build distributions:
   ::
