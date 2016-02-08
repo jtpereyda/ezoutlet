@@ -41,4 +41,17 @@ setup(
             # This can stop once tox supports installing package extras.
             'dev': ['mock', 'pytest'],
         },
+        classifiers=[
+            'Development Status :: 4 - Beta',
+            'Environment :: Console',
+            'Intended Audience :: Developers',
+            'Intended Audience :: Science/Research',
+            'License :: OSI Approved :: MIT License',
+            'Natural Language :: English',
+            'Operating System :: OS Independent',
+            'Programming Language :: Python',
+            'Programming Language :: Python :: 2.7',
+            'Topic :: Security',
+            'Topic :: Software Development :: Testing :: Traffic Generation',
+        ]
 )
