@@ -1,6 +1,8 @@
 0.0.1-dev3
 ==========
 
+-  Added badges for build and version.
+-  Doc fixes: LICENSE.txt
 -  Fixed some failing unit tests.
 
 0.0.1-dev2
