@@ -53,3 +53,5 @@ Release Checklist
       twine upload dist\ezoutlet-x.y.z-py2-none-any.whl dist\ezoutlet-0.0.1-dev3.zip
 
 .. _check-manifest: https://pypi.python.org/pypi/check-manifest
+
+9. Create accompanying release on GitHub.
