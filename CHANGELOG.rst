@@ -2,7 +2,7 @@
 ==========
 
 -  Added badges for build and version.
--  Doc fixes: LICENSE.txt
+-  Doc fixes: LICENSE.txt, setup.py
 -  Fixed some failing unit tests.
 
 0.0.1-dev2
