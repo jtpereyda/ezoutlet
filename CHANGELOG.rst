@@ -1,3 +1,8 @@
+0.0.1-dev3
+==========
+
+-  Fixed some failing unit tests.
+
 0.0.1-dev2
 ==========
 
