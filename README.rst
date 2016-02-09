@@ -5,8 +5,7 @@ ezoutlet
     :target: https://travis-ci.org/jtpereyda/ezoutlet
 
 .. image:: https://img.shields.io/pypi/v/ezoutlet.svg
-    :target: https://travis-ci.org/jtpereyda/ezoutlet
-    https://pypi.python.org/pypi/ezoutlet
+    :target: https://pypi.python.org/pypi/ezoutlet
 
 A Python script and API to reset devices using the ezOutlet EZ-11b.
 
