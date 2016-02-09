@@ -33,6 +33,7 @@ setup(
         maintainer='Joshua Pereyda',
         maintainer_email='joshua.t.pereyda@gmail.com',
         url='https://github.com/jtpereyda/ezoutlet',
+        description='Command line tool and Python API for ezOutlet EZ-11b',
         license='MIT',
         packages=['ezoutlet'],
         install_requires=['future'],
