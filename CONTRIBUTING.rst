@@ -44,24 +44,26 @@ Release Checklist
 
 4. Increment version number from last release according to PEP 0440 and roughly according to the Semantic Versioning guidelines.
 
-5. Build distributions:
+5. Modify CHANGELOG file to reflect new version number.
+
+6. Build distributions:
   ::
 
       python setup.py sdist bdist_wheel
 
-6. Visually inspect source distribution for correctness.
+7. Visually inspect source distribution for correctness.
 
-7. Upload to testpypi if changes impact PyPI (e.g., if README changed):
+8. Upload to testpypi if changes impact PyPI (e.g., if README changed):
   ::
 
       twine upload -r test  dist\ezoutlet-x.y.z-py2-none-any.whl dist\ezoutlet-0.0.1-dev3.zip
 
 
-8. Upload to pypi:
+9. Upload to pypi:
   ::
 
       twine upload dist\ezoutlet-x.y.z-py2-none-any.whl dist\ezoutlet-0.0.1-dev3.zip
 
 .. _check-manifest: https://pypi.python.org/pypi/check-manifest
 
-9. Create accompanying release on GitHub.
+10. Create accompanying release on GitHub.
