@@ -26,7 +26,7 @@ On every pull request:
 
 1. Verify changes are sensible and in line with project goals.
 2. Verify tests pass (continuous integration is OK for this).
-3. Use PyCharm to check static analysis if changes are signifcant or non-trivial.
+3. Use PyCharm to check static analysis if changes are significant or non-trivial.
 4. Verify CHANGELOG.rst is modified as appropriate.
 5. Merge in.
 

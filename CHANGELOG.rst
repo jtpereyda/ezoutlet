@@ -2,6 +2,9 @@ Upcoming
 ========
 
 -  Unit tests refactored for clarity and flexibility.
+-  API updates:
+   * EzOutletReset is now EzOutlet.
+   * EzOutlet: reset-specific arguments moved from constructor to reset().
 
 0.0.1-dev3
 ==========
