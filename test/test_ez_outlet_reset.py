@@ -49,7 +49,7 @@ class TestEzOutletReset(unittest.TestCase):
     @mock.patch.object(ez_outlet_reset, '_get_url', return_value=sample_url)
     @mock.patch('ezoutlet.ez_outlet_reset.urllib2')
     @mock.patch('ezoutlet.ez_outlet_reset.time')
-    def test_reset(self, mock_time, mock_urllib2, mock_get_url):
+    def test_reset_get(self, mock_time, mock_urllib2, mock_get_url):
         """
         Given: Mock urllib2 configured such that
                urlopen returns a mock whose read() method returns expected_response_contents.
@@ -57,8 +57,31 @@ class TestEzOutletReset(unittest.TestCase):
         When: Calling reset().
         Then: ez_outlet_reset._get_url is called using the IP address with ez_outlet_reset.RESET_URL_PATH.
          and: urllib2.urlopen(ez_outlet_reset._get_url's result, timeout) is called.
-         and: expected_response_contents is returned.
-         and: time.sleep(wait_time + reset_delay) is called.
+        """
+        # Given
+        mock_urllib2.configure_mock(
+                **{'urlopen.return_value': mock.MagicMock(
+                        **{'read.return_value': self.expected_response_contents})})
+
+        # When
+        self.uut.reset()
+
+        # Then
+        mock_get_url.assert_called_with(self.hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
+        mock_urllib2.urlopen.assert_called_once_with(self.sample_url, timeout=self.timeout)
+
+    # Suppress since PyCharm doesn't recognize @mock.patch.object
+    # noinspection PyUnresolvedReferences
+    @mock.patch.object(ez_outlet_reset, '_get_url', return_value=sample_url)
+    @mock.patch('ezoutlet.ez_outlet_reset.urllib2')
+    @mock.patch('ezoutlet.ez_outlet_reset.time')
+    def test_reset_result(self, mock_time, mock_urllib2, mock_get_url):
+        """
+        Given: Mock urllib2 configured such that
+               urlopen returns a mock whose read() method returns expected_response_contents.
+          and: EzOutletReset initialized with an IP address, wait_time, timeout, and reset_delay.
+        When: Calling reset().
+        Then: expected_response_contents is returned.
         """
         # Given
         mock_urllib2.configure_mock(
@@ -69,9 +92,30 @@ class TestEzOutletReset(unittest.TestCase):
         result = self.uut.reset()
 
         # Then
-        mock_get_url.assert_called_with(self.hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
-        mock_urllib2.urlopen.assert_called_once_with(self.sample_url, timeout=self.timeout)
         self.assertEqual(self.expected_response_contents, result)
+
+    # Suppress since PyCharm doesn't recognize @mock.patch.object
+    # noinspection PyUnresolvedReferences
+    @mock.patch.object(ez_outlet_reset, '_get_url', return_value=sample_url)
+    @mock.patch('ezoutlet.ez_outlet_reset.urllib2')
+    @mock.patch('ezoutlet.ez_outlet_reset.time')
+    def test_reset_sleep(self, mock_time, mock_urllib2, mock_get_url):
+        """
+        Given: Mock urllib2 configured such that
+               urlopen returns a mock whose read() method returns expected_response_contents.
+          and: EzOutletReset initialized with an IP address, wait_time, timeout, and reset_delay.
+        When: Calling reset().
+        Then: time.sleep(wait_time + reset_delay) is called.
+        """
+        # Given
+        mock_urllib2.configure_mock(
+                **{'urlopen.return_value': mock.MagicMock(
+                        **{'read.return_value': self.expected_response_contents})})
+
+        # When
+        self.uut.reset()
+
+        # Then
         mock_time.sleep.assert_called_once_with(self.wait_time + self.reset_delay)
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
