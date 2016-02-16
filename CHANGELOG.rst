@@ -1,3 +1,8 @@
+Upcoming
+========
+
+-  Unit tests refactored for clarity and flexibility.
+
 0.0.1-dev3
 ==========
 
