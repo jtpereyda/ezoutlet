@@ -98,7 +98,7 @@ class EzOutlet:
                 to reboot. See also reset_delay.
             ez_outlet_reset_interval: Time to wait before returning (besides
                 dut_reset_delay). This should be configured to match the time
-                the ezOutlet device actullay takes to turn off and on again.
+                the ezOutlet device actually takes to turn off and on again.
                 Set to 0 to make this method non-blocking.
 
         Returns: HTTP response contents.
