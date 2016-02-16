@@ -26,13 +26,8 @@ class TestEzOutletReset(unittest.TestCase):
     EzOutletReset.post_fail is basically all side-effects, so its test is
     rather heavy in mocks.
     """
-
-    arbitrary_msg_1 = 'arbitrary message'
-    arbitrary_msg_2 = '"Always check a module in cleaner than when you checked it out." --Uncle Bob'
-
     sample_url = 'DEAD STRINGS TELL NO TALES'
     expected_response_contents = ez_outlet_reset.EzOutletReset.EXPECTED_RESPONSE_CONTENTS
-    unexpected_response_contents = '1,0'
 
     def setup_method(self, _):
         self.hostname = '12.34.56.78'
@@ -117,6 +112,30 @@ class TestEzOutletReset(unittest.TestCase):
 
         # Then
         mock_time.sleep.assert_called_once_with(self.wait_time + self.reset_delay)
+
+
+class TestEzOutletResetExceptions(unittest.TestCase):
+    """
+    EzOutletReset.post_fail is basically all side-effects, so its test is
+    rather heavy in mocks.
+    """
+
+    arbitrary_msg_1 = 'arbitrary message'
+    arbitrary_msg_2 = '"Always check a module in cleaner than when you checked it out." --Uncle Bob'
+
+    sample_url = 'DEAD STRINGS TELL NO TALES'
+    expected_response_contents = ez_outlet_reset.EzOutletReset.EXPECTED_RESPONSE_CONTENTS
+    unexpected_response_contents = '1,0'
+
+    def setup_method(self, _):
+        self.hostname = '12.34.56.78'
+        self.wait_time = 12.34
+        self.reset_delay = 3.21
+        self.timeout = 11.12
+        self.uut = ez_outlet_reset.EzOutletReset(hostname=self.hostname,
+                                                 wait_time=self.wait_time,
+                                                 timeout=self.timeout,
+                                                 reset_delay=self.reset_delay)
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
