@@ -53,11 +53,10 @@ class TestEzOutletReset(unittest.TestCase):
 
         ez_outlet_reset.main(args)
 
-        mock_ez_outlet_reset.assert_called_once_with(hostname=hostname,
-                                                     # Duplicate reference to DEFAULT_WAIT_TIME needed because
-                                                     # we mocked away EzOutletReset.
-                                                     wait_time=EZ_OUTLET_RESET_DEFAULT_WAIT_TIME)
-        mock_ez_outlet_reset.return_value.reset.assert_called_once_with()
+        mock_ez_outlet_reset.assert_called_once_with(hostname=hostname)
+        # Duplicate reference to DEFAULT_WAIT_TIME needed because
+        # we mocked away EzOutletReset.
+        mock_ez_outlet_reset.return_value.reset.assert_called_once_with(dut_reset_delay=EZ_OUTLET_RESET_DEFAULT_WAIT_TIME)
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
         assert ez_outlet_reset.sys.stderr.getvalue() == ''
 
@@ -80,9 +79,8 @@ class TestEzOutletReset(unittest.TestCase):
 
         ez_outlet_reset.main(args)
 
-        mock_ez_outlet_reset.assert_called_once_with(hostname=hostname,
-                                                     wait_time=wait_time)
-        mock_ez_outlet_reset.return_value.reset.assert_called_once_with()
+        mock_ez_outlet_reset.assert_called_once_with(hostname=hostname)
+        mock_ez_outlet_reset.return_value.reset.assert_called_once_with(dut_reset_delay=wait_time)
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
         assert ez_outlet_reset.sys.stderr.getvalue() == ''
 
@@ -105,9 +103,8 @@ class TestEzOutletReset(unittest.TestCase):
 
         ez_outlet_reset.main(args)
 
-        mock_ez_outlet_reset.assert_called_once_with(hostname=hostname,
-                                                     wait_time=wait_time)
-        mock_ez_outlet_reset.return_value.reset.assert_called_once_with()
+        mock_ez_outlet_reset.assert_called_once_with(hostname=hostname)
+        mock_ez_outlet_reset.return_value.reset.assert_called_once_with(dut_reset_delay=wait_time)
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
         assert ez_outlet_reset.sys.stderr.getvalue() == ''
 
@@ -239,7 +236,7 @@ class TestEzOutletReset(unittest.TestCase):
                          ez_outlet_reset.sys.stderr.getvalue()) is not None
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
 
-        mock_ez_outlet_reset.assert_called_with()
+        mock_ez_outlet_reset.assert_called_with(dut_reset_delay=ez_outlet_reset.EzOutletReset.DEFAULT_WAIT_TIME)
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
@@ -277,4 +274,4 @@ class TestEzOutletReset(unittest.TestCase):
 
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
 
-        mock_ez_outlet_reset.assert_called_with()
+        mock_ez_outlet_reset.assert_called_with(dut_reset_delay=ez_outlet_reset.EzOutletReset.DEFAULT_WAIT_TIME)
