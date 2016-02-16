@@ -84,7 +84,7 @@ class EzOutletReset:
     def url(self):
         return _get_url(self._hostname, self.RESET_URL_PATH)
 
-    def reset(self, dut_reset_delay=DEFAULT_WAIT_TIME, ez_outlet_reset_interval=DEFAULT_EZ_OUTLET_RESET_INTERVAL):
+    def reset(self, post_reset_delay=DEFAULT_WAIT_TIME, ez_outlet_reset_interval=DEFAULT_EZ_OUTLET_RESET_INTERVAL):
         """Send reset request to ezOutlet, check response, wait for reset.
 
         After sending HTTP request and receiving response, wait
@@ -94,7 +94,7 @@ class EzOutletReset:
         an unexpected response, this method will raise an exception.
 
         Args:
-            dut_reset_delay: Time in seconds to allow the device being reset
+            post_reset_delay: Time in seconds to allow the device being reset
                 to reboot. See also reset_delay.
             ez_outlet_reset_interval: Time to wait before returning (besides
                 dut_reset_delay). This should be configured to match the time
@@ -113,7 +113,7 @@ class EzOutletReset:
 
         self._check_response_raise_if_unexpected(response)
 
-        self._wait_for_reset(dut_reset_delay + ez_outlet_reset_interval)
+        self._wait_for_reset(post_reset_delay + ez_outlet_reset_interval)
 
         return response
 
@@ -216,7 +216,7 @@ def _handle_unexpected_error(exception):
 def _parse_args_and_reset(argv):
     parsed_args = _parser.parse_args(argv)
     ez_outlet = EzOutletReset(hostname=parsed_args.target)
-    ez_outlet.reset(dut_reset_delay=parsed_args.reset_time)
+    ez_outlet.reset(post_reset_delay=parsed_args.reset_time)
 
 
 def main(argv):
