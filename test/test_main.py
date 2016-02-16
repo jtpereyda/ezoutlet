@@ -278,19 +278,3 @@ class TestEzOutletReset(unittest.TestCase):
         assert ez_outlet_reset.sys.stdout.getvalue() == ''
 
         mock_ez_outlet_reset.assert_called_with()
-
-
-@pytest.mark.parametrize("hostname,expected_url", [('1.2.3.4', 'http://1.2.3.4/reset.cgi')])
-def test_url(hostname, expected_url):
-    """
-    Given: A hostname.
-    When: Creating an EzOutletReset using hostname.
-    Then: Property `url` returns the expected URL.
-
-    Args:
-        hostname: test parameter
-        expected_url: test parameter
-    """
-    uut = ez_outlet_reset.EzOutletReset(hostname=hostname)
-
-    assert expected_url == uut.url
