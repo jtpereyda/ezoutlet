@@ -37,11 +37,11 @@ EXIT_CODE_ERR = 1
 EXIT_CODE_PARSER_ERR = 2
 
 
-class EzOutletResetError(Exception):
+class EzOutletError(Exception):
     pass
 
 
-class EzOutletResetUsageError(EzOutletResetError):
+class EzOutletUsageError(EzOutletError):
     pass
 
 
@@ -49,7 +49,7 @@ def _get_url(hostname, path):
     return urlparse.urlunparse(('http', hostname, path, '', '', ''))
 
 
-class EzOutletReset:
+class EzOutlet:
     """Uses ezOutlet EZ-11b to reset a device.
 
     Uses the ezOutlet EZ-11b Internet IP-Enabled Remote Power Reboot Switch to
@@ -132,7 +132,7 @@ class EzOutletReset:
         try:
             return urllib2.urlopen(url, timeout=self._timeout).read()
         except urllib2.URLError:
-            raise EzOutletResetError(self.NO_RESPONSE_MSG.format(self._timeout)), \
+            raise EzOutletError(self.NO_RESPONSE_MSG.format(self._timeout)), \
                 None, \
                 sys.exc_info()[2]
 
@@ -150,7 +150,7 @@ class EzOutletReset:
                   EzOutletReset.EXPECTED_RESPONSE_CONTENTS)
         """
         if response != self.EXPECTED_RESPONSE_CONTENTS:
-            raise EzOutletResetError(self.UNEXPECTED_RESPONSE_MSG.format(response))
+            raise EzOutletError(self.UNEXPECTED_RESPONSE_MSG.format(response))
 
     @staticmethod
     def _wait_for_reset(total_delay):
@@ -183,7 +183,7 @@ class _Parser(object):
     @staticmethod
     def _check_args(parsed_args):
         if parsed_args.reset_time < 0:
-            raise EzOutletResetUsageError(RESET_TIME_NEGATIVE_ERROR_MESSAGE)
+            raise EzOutletUsageError(RESET_TIME_NEGATIVE_ERROR_MESSAGE)
 
 _parser = _Parser()
 
@@ -215,16 +215,16 @@ def _handle_unexpected_error(exception):
 
 def _parse_args_and_reset(argv):
     parsed_args = _parser.parse_args(argv)
-    ez_outlet = EzOutletReset(hostname=parsed_args.target)
+    ez_outlet = EzOutlet(hostname=parsed_args.target)
     ez_outlet.reset(post_reset_delay=parsed_args.reset_time)
 
 
 def main(argv):
     try:
         _parse_args_and_reset(argv)
-    except EzOutletResetUsageError as e:
+    except EzOutletUsageError as e:
         _usage_error(e)
-    except EzOutletResetError as e:
+    except EzOutletError as e:
         _handle_error(e)
     except Exception as e:
         _handle_unexpected_error(e)

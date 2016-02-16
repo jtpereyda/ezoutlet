@@ -14,34 +14,34 @@ except ImportError:
     # noinspection PyPackageRequirements
     import mock
 
-from ezoutlet import ez_outlet_reset
+from ezoutlet import ez_outlet
 
 EXIT_CODE_ERR = 1
 EXIT_CODE_PARSER_ERR = 2
-EZ_OUTLET_RESET_DEFAULT_WAIT_TIME = ez_outlet_reset.EzOutletReset.DEFAULT_WAIT_TIME
+EZ_OUTLET_RESET_DEFAULT_WAIT_TIME = ez_outlet.EzOutlet.DEFAULT_WAIT_TIME
 
 sample_url = 'DEAD STRINGS TELL NO TALES'
 
 
 # Suppress since PyCharm doesn't recognize @mock.patch.object
 # noinspection PyUnresolvedReferences
-@mock.patch.object(ez_outlet_reset, '_get_url', return_value=sample_url)
-@mock.patch('ezoutlet.ez_outlet_reset.urllib2')
-@mock.patch('ezoutlet.ez_outlet_reset.time')
-class TestEzOutletReset(unittest.TestCase):
+@mock.patch.object(ez_outlet, '_get_url', return_value=sample_url)
+@mock.patch('ezoutlet.ez_outlet.urllib2')
+@mock.patch('ezoutlet.ez_outlet.time')
+class TestEzOutlet(unittest.TestCase):
     """
-    EzOutletReset.post_fail is basically all side-effects, so its test is
+    EzOutlet.post_fail is basically all side-effects, so its test is
     rather heavy in mocks.
     """
-    expected_response_contents = ez_outlet_reset.EzOutletReset.EXPECTED_RESPONSE_CONTENTS
+    expected_response_contents = ez_outlet.EzOutlet.EXPECTED_RESPONSE_CONTENTS
 
     def setup_method(self, _):
         self.hostname = '12.34.56.78'
         self.post_reset_delay = 12.34
         self.ez_outlet_reset_interval = 3.21
         self.timeout = 11.12
-        self.uut = ez_outlet_reset.EzOutletReset(hostname=self.hostname,
-                                                 timeout=self.timeout)
+        self.uut = ez_outlet.EzOutlet(hostname=self.hostname,
+                                      timeout=self.timeout)
 
     def configure_mock_urllib2(self, mock_urllib2):
         mock_urllib2.configure_mock(
@@ -52,10 +52,10 @@ class TestEzOutletReset(unittest.TestCase):
         """
         Given: Mock urllib2 configured such that
                urlopen returns a mock whose read() method returns expected_response_contents.
-          and: EzOutletReset initialized with an IP address and timeout.
+          and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
-        Then: ez_outlet_reset._get_url is called using the IP address with ez_outlet_reset.RESET_URL_PATH.
-         and: urllib2.urlopen(ez_outlet_reset._get_url's result, timeout) is called.
+        Then: ez_outlet._get_url is called using the IP address with ez_outlet.RESET_URL_PATH.
+         and: urllib2.urlopen(ez_outlet._get_url's result, timeout) is called.
         """
         _ = mock_time
 
@@ -67,14 +67,14 @@ class TestEzOutletReset(unittest.TestCase):
                        ez_outlet_reset_interval=self.ez_outlet_reset_interval)
 
         # Then
-        mock_get_url.assert_called_with(self.hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
+        mock_get_url.assert_called_with(self.hostname, ez_outlet.EzOutlet.RESET_URL_PATH)
         mock_urllib2.urlopen.assert_called_once_with(sample_url, timeout=self.timeout)
 
     def test_reset_result(self, mock_time, mock_urllib2, mock_get_url):
         """
         Given: Mock urllib2 configured such that
                urlopen returns a mock whose read() method returns expected_response_contents.
-          and: EzOutletReset initialized with an IP address and timeout.
+          and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
         Then: expected_response_contents is returned.
         """
@@ -95,7 +95,7 @@ class TestEzOutletReset(unittest.TestCase):
         """
         Given: Mock urllib2 configured such that
                urlopen returns a mock whose read() method returns expected_response_contents.
-          and: EzOutletReset initialized with an IP address and timeout.
+          and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
         Then: time.sleep(post_reset_delay + ez_outlet_reset_interval) is called.
         """
@@ -114,12 +114,12 @@ class TestEzOutletReset(unittest.TestCase):
 
 # Suppress since PyCharm doesn't recognize @mock.patch.object
 # noinspection PyUnresolvedReferences
-@mock.patch.object(ez_outlet_reset, '_get_url', return_value=sample_url)
-@mock.patch('ezoutlet.ez_outlet_reset.urllib2')
-@mock.patch('ezoutlet.ez_outlet_reset.time')
-class TestEzOutletResetNoResponse(unittest.TestCase):
+@mock.patch.object(ez_outlet, '_get_url', return_value=sample_url)
+@mock.patch('ezoutlet.ez_outlet.urllib2')
+@mock.patch('ezoutlet.ez_outlet.time')
+class TestEzOutletNoResponse(unittest.TestCase):
     """
-    EzOutletReset.post_fail is basically all side-effects, so its test is
+    EzOutlet.post_fail is basically all side-effects, so its test is
     rather heavy in mocks.
     """
 
@@ -128,8 +128,8 @@ class TestEzOutletResetNoResponse(unittest.TestCase):
         self.post_reset_delay = 12.34
         self.ez_outlet_reset_interval = 3.21
         self.timeout = 11.12
-        self.uut = ez_outlet_reset.EzOutletReset(hostname=self.hostname,
-                                                 timeout=self.timeout)
+        self.uut = ez_outlet.EzOutlet(hostname=self.hostname,
+                                      timeout=self.timeout)
 
     def configure_mock_urllib2(self, mock_urllib2):
         mock_urllib2.configure_mock(**{'urlopen.side_effect': urllib2.URLError("Dummy reason")})
@@ -138,10 +138,10 @@ class TestEzOutletResetNoResponse(unittest.TestCase):
     def test_reset_no_response_get(self, mock_time, mock_urllib2, mock_get_url):
         """
         Given: Mock urllib2 configured to raise urllib2.URLError on urlopen.
-          and: EzOutletReset initialized with an IP address and timeout.
+          and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
-        Then: ez_outlet_reset._get_url is called using the IP address with ez_outlet_reset.RESET_URL_PATH.
-         and: urllib2.urlopen(ez_outlet_reset._get_url's result, timeout) is called.
+        Then: ez_outlet._get_url is called using the IP address with ez_outlet.RESET_URL_PATH.
+         and: urllib2.urlopen(ez_outlet._get_url's result, timeout) is called.
         """
         _ = mock_time
 
@@ -152,20 +152,20 @@ class TestEzOutletResetNoResponse(unittest.TestCase):
         try:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
-        except ez_outlet_reset.EzOutletResetError:
+        except ez_outlet.EzOutletError:
             pass  # exception tested elsewhere
 
         # Then
-        mock_get_url.assert_called_with(self.hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
+        mock_get_url.assert_called_with(self.hostname, ez_outlet.EzOutlet.RESET_URL_PATH)
         mock_urllib2.urlopen.assert_called_once_with(sample_url, timeout=self.timeout)
 
     def test_reset_no_response_raise(self, mock_time, mock_urllib2, mock_get_url):
         """
         Given: Mock urllib2 configured to raise urllib2.URLError on urlopen.
-          and: EzOutletReset initialized with an IP address and timeout.
+          and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
-        Then: reset() raises ez_outlet_reset.EzOutletResetError, e.
-         and: e.message == ez_outlet_reset.EzOutletReset.NO_RESPONSE_MSG.format(timeout).
+        Then: reset() raises ez_outlet.EzOutletError, e.
+         and: e.message == ez_outlet.EzOutlet.NO_RESPONSE_MSG.format(timeout).
         """
         _ = mock_time
         _ = mock_get_url
@@ -174,18 +174,18 @@ class TestEzOutletResetNoResponse(unittest.TestCase):
         self.configure_mock_urllib2(mock_urllib2=mock_urllib2)
 
         # When
-        with self.assertRaises(ez_outlet_reset.EzOutletResetError) as e:
+        with self.assertRaises(ez_outlet.EzOutletError) as e:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
 
         # Then
         self.assertEqual(e.exception.message,
-                         ez_outlet_reset.EzOutletReset.NO_RESPONSE_MSG.format(self.timeout))
+                         ez_outlet.EzOutlet.NO_RESPONSE_MSG.format(self.timeout))
 
     def test_reset_no_response_no_sleep(self, mock_time, mock_urllib2, mock_get_url):
         """
         Given: Mock urllib2 configured to raise urllib2.URLError on urlopen.
-          and: EzOutletReset initialized with an IP address and timeout.
+          and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
         Then: time.sleep(post_reset_delay + ez_outlet_reset_interval) is _not_ called.
         """
@@ -198,7 +198,7 @@ class TestEzOutletResetNoResponse(unittest.TestCase):
         try:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
-        except ez_outlet_reset.EzOutletResetError:
+        except ez_outlet.EzOutletError:
             pass  # exception tested elsewhere
 
         # Then
@@ -207,12 +207,12 @@ class TestEzOutletResetNoResponse(unittest.TestCase):
 
 # Suppress since PyCharm doesn't recognize @mock.patch.object
 # noinspection PyUnresolvedReferences
-@mock.patch.object(ez_outlet_reset, '_get_url', return_value=sample_url)
-@mock.patch('ezoutlet.ez_outlet_reset.urllib2')
-@mock.patch('ezoutlet.ez_outlet_reset.time')
-class TestEzOutletResetUnexpectedResponse(unittest.TestCase):
+@mock.patch.object(ez_outlet, '_get_url', return_value=sample_url)
+@mock.patch('ezoutlet.ez_outlet.urllib2')
+@mock.patch('ezoutlet.ez_outlet.time')
+class TestEzOutletUnexpectedResponse(unittest.TestCase):
     """
-    EzOutletReset.post_fail is basically all side-effects, so its test is
+    EzOutlet.post_fail is basically all side-effects, so its test is
     rather heavy in mocks.
     """
 
@@ -223,8 +223,8 @@ class TestEzOutletResetUnexpectedResponse(unittest.TestCase):
         self.post_reset_delay = 12.34
         self.ez_outlet_reset_interval = 3.21
         self.timeout = 11.12
-        self.uut = ez_outlet_reset.EzOutletReset(hostname=self.hostname,
-                                                 timeout=self.timeout)
+        self.uut = ez_outlet.EzOutlet(hostname=self.hostname,
+                                      timeout=self.timeout)
 
     def configure_mock_urllib2(self, mock_urllib2):
         mock_urllib2.configure_mock(
@@ -235,10 +235,10 @@ class TestEzOutletResetUnexpectedResponse(unittest.TestCase):
         """
         Given: Mock urllib2 configured such that
                urlopen returns a mock whose read() method returns unexpected_response_contents.
-          and: EzOutletReset initialized with an IP address and timeout.
+          and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
-        Then: ez_outlet_reset._get_url is called using the IP address with ez_outlet_reset.RESET_URL_PATH.
-         and: urllib2.urlopen(ez_outlet_reset._get_url's result, timeout) is called.
+        Then: ez_outlet._get_url is called using the IP address with ez_outlet.RESET_URL_PATH.
+         and: urllib2.urlopen(ez_outlet._get_url's result, timeout) is called.
         """
         _ = mock_time
 
@@ -249,21 +249,21 @@ class TestEzOutletResetUnexpectedResponse(unittest.TestCase):
         try:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
-        except ez_outlet_reset.EzOutletResetError:
+        except ez_outlet.EzOutletError:
             pass  # exception tested elsewhere
 
         # Then
-        mock_get_url.assert_called_with(self.hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
+        mock_get_url.assert_called_with(self.hostname, ez_outlet.EzOutlet.RESET_URL_PATH)
         mock_urllib2.urlopen.assert_called_once_with(sample_url, timeout=self.timeout)
 
     def test_reset_unexpected_response_raises(self, mock_time, mock_urllib2, mock_get_url):
         """
         Given: Mock urllib2 configured such that
                urlopen returns a mock whose read() method returns unexpected_response_contents.
-          and: EzOutletReset initialized with an IP address and timeout.
+          and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
-        Then: reset() raises ez_outlet_reset.EzOutletResetError, e.
-         and: e.message == ez_outlet_reset.EzOutletReset.UNEXPECTED_RESPONSE_MSG.format(unexpected_response_contents).
+        Then: reset() raises ez_outlet.EzOutletError, e.
+         and: e.message == ez_outlet.EzOutlet.UNEXPECTED_RESPONSE_MSG.format(unexpected_response_contents).
         """
         _ = mock_time
         _ = mock_get_url
@@ -272,20 +272,20 @@ class TestEzOutletResetUnexpectedResponse(unittest.TestCase):
         self.configure_mock_urllib2(mock_urllib2=mock_urllib2)
 
         # When
-        with self.assertRaises(ez_outlet_reset.EzOutletResetError) as e:
+        with self.assertRaises(ez_outlet.EzOutletError) as e:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
 
         # Then
         self.assertEqual(e.exception.message,
-                         ez_outlet_reset.EzOutletReset.UNEXPECTED_RESPONSE_MSG.format(
+                         ez_outlet.EzOutlet.UNEXPECTED_RESPONSE_MSG.format(
                                  self.unexpected_response_contents))
 
     def test_reset_unexpected_response_no_sleep(self, mock_time, mock_urllib2, mock_get_url):
         """
         Given: Mock urllib2 configured such that
                urlopen returns a mock whose read() method returns unexpected_response_contents.
-          and: EzOutletReset initialized with an IP address and timeout.
+          and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
         Then: time.sleep(post_reset_delay + ez_outlet_reset_interval) is _not_ called.
         """
@@ -298,7 +298,7 @@ class TestEzOutletResetUnexpectedResponse(unittest.TestCase):
         try:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
-        except ez_outlet_reset.EzOutletResetError:
+        except ez_outlet.EzOutletError:
             pass  # exception tested elsewhere
 
         # Then
@@ -309,13 +309,13 @@ class TestEzOutletResetUnexpectedResponse(unittest.TestCase):
 def test_url(hostname, expected_url):
     """
     Given: A hostname.
-    When: Creating an EzOutletReset using hostname.
+    When: Creating an EzOutlet using hostname.
     Then: Property `url` returns the expected URL.
 
     Args:
         hostname: test parameter
         expected_url: test parameter
     """
-    uut = ez_outlet_reset.EzOutletReset(hostname=hostname)
+    uut = ez_outlet.EzOutlet(hostname=hostname)
 
     assert expected_url == uut.url
