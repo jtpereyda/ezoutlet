@@ -34,6 +34,16 @@ class TestEzOutletReset(unittest.TestCase):
     expected_response_contents = ez_outlet_reset.EzOutletReset.EXPECTED_RESPONSE_CONTENTS
     unexpected_response_contents = '1,0'
 
+    def setup_method(self, _):
+        self.hostname = '12.34.56.78'
+        self.wait_time = 12.34
+        self.reset_delay = 3.21
+        self.timeout = 11.12
+        self.uut = ez_outlet_reset.EzOutletReset(hostname=self.hostname,
+                                                 wait_time=self.wait_time,
+                                                 timeout=self.timeout,
+                                                 reset_delay=self.reset_delay)
+
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
     @mock.patch.object(ez_outlet_reset, '_get_url', return_value=sample_url)
@@ -54,23 +64,15 @@ class TestEzOutletReset(unittest.TestCase):
         mock_urllib2.configure_mock(
                 **{'urlopen.return_value': mock.MagicMock(
                         **{'read.return_value': self.expected_response_contents})})
-        hostname = '12.34.56.78'
-        wait_time = 12.34
-        reset_delay = 3.21
-        timeout = 11.12
-        uut = ez_outlet_reset.EzOutletReset(hostname=hostname,
-                                            wait_time=wait_time,
-                                            timeout=timeout,
-                                            reset_delay=reset_delay)
 
         # When
-        result = uut.reset()
+        result = self.uut.reset()
 
         # Then
-        mock_get_url.assert_called_with(hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
-        mock_urllib2.urlopen.assert_called_once_with(self.sample_url, timeout=timeout)
+        mock_get_url.assert_called_with(self.hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
+        mock_urllib2.urlopen.assert_called_once_with(self.sample_url, timeout=self.timeout)
         self.assertEqual(self.expected_response_contents, result)
-        mock_time.sleep.assert_called_once_with(wait_time + reset_delay)
+        mock_time.sleep.assert_called_once_with(self.wait_time + self.reset_delay)
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
@@ -91,25 +93,16 @@ class TestEzOutletReset(unittest.TestCase):
         # Given
         mock_urllib2.configure_mock(**{'urlopen.side_effect': urllib2.URLError("Dummy reason")})
         mock_urllib2.URLError = urllib2.URLError  # Restore mocked-away URLError
-        # and
-        hostname = '12.34.56.78'
-        wait_time = 12.34
-        reset_delay = 3.21
-        timeout = 11.12
-        ez = ez_outlet_reset.EzOutletReset(hostname=hostname,
-                                           wait_time=wait_time,
-                                           timeout=timeout,
-                                           reset_delay=reset_delay)
 
         # When
         with self.assertRaises(ez_outlet_reset.EzOutletResetError) as e:
-            ez.reset()
+            self.uut.reset()
 
         # Then
         self.assertEqual(e.exception.message,
-                         ez_outlet_reset.EzOutletReset.NO_RESPONSE_MSG.format(timeout))
-        mock_get_url.assert_called_with(hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
-        mock_urllib2.urlopen.assert_called_once_with(self.sample_url, timeout=timeout)
+                         ez_outlet_reset.EzOutletReset.NO_RESPONSE_MSG.format(self.timeout))
+        mock_get_url.assert_called_with(self.hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
+        mock_urllib2.urlopen.assert_called_once_with(self.sample_url, timeout=self.timeout)
         mock_time.sleep.assert_not_called()
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
@@ -133,26 +126,17 @@ class TestEzOutletReset(unittest.TestCase):
         mock_urllib2.configure_mock(
                 **{'urlopen.return_value': mock.MagicMock(
                         **{'read.return_value': self.unexpected_response_contents})})
-        # and
-        hostname = '12.34.56.78'
-        wait_time = 12.34
-        reset_delay = 3.21
-        timeout = 11.12
-        ez = ez_outlet_reset.EzOutletReset(hostname=hostname,
-                                           wait_time=wait_time,
-                                           timeout=timeout,
-                                           reset_delay=reset_delay)
 
         # When
         with self.assertRaises(ez_outlet_reset.EzOutletResetError) as e:
-            ez.reset()
+            self.uut.reset()
 
         # Then
         self.assertEqual(e.exception.message,
                          ez_outlet_reset.EzOutletReset.UNEXPECTED_RESPONSE_MSG.format(
                                  self.unexpected_response_contents))
-        mock_get_url.assert_called_with(hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
-        mock_urllib2.urlopen.assert_called_once_with(self.sample_url, timeout=timeout)
+        mock_get_url.assert_called_with(self.hostname, ez_outlet_reset.EzOutletReset.RESET_URL_PATH)
+        mock_urllib2.urlopen.assert_called_once_with(self.sample_url, timeout=self.timeout)
         mock_time.sleep.assert_not_called()
 
 
