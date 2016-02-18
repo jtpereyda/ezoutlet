@@ -164,7 +164,7 @@ class TestEzOutletNoResponse(unittest.TestCase):
           and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
         Then: reset() raises ez_outlet.EzOutletError, e.
-         and: e.message == ez_outlet.EzOutlet.NO_RESPONSE_MSG.format(timeout).
+         and: str(e) == ez_outlet.EzOutlet.NO_RESPONSE_MSG.format(timeout).
         """
         _ = mock_time
         _ = mock_get_url
@@ -178,7 +178,7 @@ class TestEzOutletNoResponse(unittest.TestCase):
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
 
         # Then
-        self.assertEqual(e.exception.message,
+        self.assertEqual(str(e.exception),
                          ez_outlet.EzOutlet.NO_RESPONSE_MSG.format(self.timeout))
 
     def test_reset_no_response_no_sleep(self, mock_time, mock_requests, mock_get_url):
@@ -260,7 +260,7 @@ class TestEzOutletUnexpectedResponse(unittest.TestCase):
           and: EzOutlet initialized with an IP address and timeout.
         When: Calling reset(post_reset_delay, ez_outlet_reset_interval).
         Then: reset() raises ez_outlet.EzOutletError, e.
-         and: e.message == ez_outlet.EzOutlet.UNEXPECTED_RESPONSE_MSG.format(unexpected_response_contents).
+         and: str(e) == ez_outlet.EzOutlet.UNEXPECTED_RESPONSE_MSG.format(unexpected_response_contents).
         """
         _ = mock_time
         _ = mock_get_url
@@ -274,7 +274,7 @@ class TestEzOutletUnexpectedResponse(unittest.TestCase):
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
 
         # Then
-        self.assertEqual(e.exception.message,
+        self.assertEqual(str(e.exception),
                          ez_outlet.EzOutlet.UNEXPECTED_RESPONSE_MSG.format(
                                  self.unexpected_response_contents))
 

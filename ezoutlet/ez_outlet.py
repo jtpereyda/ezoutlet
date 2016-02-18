@@ -205,12 +205,12 @@ def _print_error(msg):
 
 def _usage_error(exception):
     _print_usage()
-    _print_error(msg=exception.message)
+    _print_error(msg=exception)
     sys.exit(EXIT_CODE_PARSER_ERR)
 
 
 def _handle_error(exception):
-    _print_error(msg=exception.message)
+    _print_error(msg=exception)
     sys.exit(EXIT_CODE_ERR)
 
 
