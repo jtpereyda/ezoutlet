@@ -36,7 +36,7 @@ setup(
         description='Command line tool and Python API for ezOutlet EZ-11b',
         license='MIT',
         packages=['ezoutlet'],
-        install_requires=['future'],
+        install_requires=['future', 'requests'],
         extras_require={
             # This list is duplicated in tox.ini. Make sure to change both!
             # This can stop once tox supports installing package extras.

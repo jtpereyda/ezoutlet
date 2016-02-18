@@ -9,8 +9,9 @@ import os
 import sys
 import time
 import traceback
-import urllib2
 import urlparse
+
+import requests
 
 _DEFAULT_EZ_OUTLET_RESET_INTERVAL = 3.05
 
@@ -130,8 +131,10 @@ class EzOutlet:
                 - no response in self._timeout seconds
         """
         try:
-            return urllib2.urlopen(url, timeout=self._timeout).read()
-        except urllib2.URLError:
+            return requests.get(url,
+                                timeout=self._timeout,
+                                proxies={"http": None, "https": None}).text
+        except requests.exceptions.ConnectTimeout:
             raise EzOutletError(self.NO_RESPONSE_MSG.format(self._timeout)), \
                 None, \
                 sys.exc_info()[2]
