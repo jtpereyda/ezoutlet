@@ -2,7 +2,7 @@
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 
-import StringIO
+import io
 import re
 import unittest
 
@@ -35,8 +35,8 @@ class TestEzOutletReset(unittest.TestCase):
     expected_response_contents = ez_outlet.EzOutlet.EXPECTED_RESPONSE_CONTENTS
     unexpected_response_contents = '1,0'
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.EzOutlet')
     def test_main_basic(self, mock_ez_outlet):
         """
@@ -61,8 +61,8 @@ class TestEzOutletReset(unittest.TestCase):
         assert ez_outlet.sys.stdout.getvalue() == ''
         assert ez_outlet.sys.stderr.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.EzOutlet')
     def test_main_reset_time_long(self, mock_ez_outlet):
         """
@@ -85,8 +85,8 @@ class TestEzOutletReset(unittest.TestCase):
         assert ez_outlet.sys.stdout.getvalue() == ''
         assert ez_outlet.sys.stderr.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.EzOutlet')
     def test_main_reset_time_short(self, mock_ez_outlet):
         """
@@ -109,8 +109,8 @@ class TestEzOutletReset(unittest.TestCase):
         assert ez_outlet.sys.stdout.getvalue() == ''
         assert ez_outlet.sys.stderr.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     def test_main_missing_target(self):
         """
         Given: Mock EzOutlet.
@@ -130,8 +130,8 @@ class TestEzOutletReset(unittest.TestCase):
 
         assert ez_outlet.sys.stdout.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     def test_main_unknown_arg(self, ):
         """
         Given: Mock EzOutlet.
@@ -152,8 +152,8 @@ class TestEzOutletReset(unittest.TestCase):
                          ez_outlet.sys.stderr.getvalue()) is not None
         assert ez_outlet.sys.stdout.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     def test_main_reset_time_negative(self):
         """
         Given: Mock EzOutlet.
@@ -177,8 +177,8 @@ class TestEzOutletReset(unittest.TestCase):
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch.object(ez_outlet._Parser, 'parse_args',
                        side_effect=ez_outlet.EzOutletUsageError(arbitrary_msg_1))
     def test_error_handling_ez_outlet_reset_usage_error(self, mock_parser):
@@ -209,8 +209,8 @@ class TestEzOutletReset(unittest.TestCase):
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch.object(ez_outlet.EzOutlet, 'reset',
                        side_effect=ez_outlet.EzOutletError(arbitrary_msg_2))
     def test_error_handling_ez_outlet_reset_error(self, mock_ez_outlet):
@@ -241,8 +241,8 @@ class TestEzOutletReset(unittest.TestCase):
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch.object(ez_outlet.EzOutlet, 'reset',
                        side_effect=Exception(arbitrary_msg_2))
     def test_error_handling_unhandled_error(self, mock_ez_outlet):
