@@ -126,7 +126,9 @@ class TestEzOutletReset(unittest.TestCase):
 
         assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
-        assert re.search(".*: error: too few arguments", ez_outlet.sys.stderr.getvalue()) is not None
+        # Error message differs between Python 2 and 3 versions of argparse
+        assert re.search(".*: (error: too few arguments|the following arguments are required:)",
+                         ez_outlet.sys.stderr.getvalue()) is not None
 
         assert ez_outlet.sys.stdout.getvalue() == ''
 
