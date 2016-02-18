@@ -124,7 +124,7 @@ class TestEzOutletReset(unittest.TestCase):
         with pytest.raises(SystemExit) as exception_info:
             ez_outlet.main(args)
 
-        assert exception_info.value.message == EXIT_CODE_PARSER_ERR
+        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
         assert re.search(".*: error: too few arguments", ez_outlet.sys.stderr.getvalue()) is not None
 
@@ -146,7 +146,7 @@ class TestEzOutletReset(unittest.TestCase):
         with pytest.raises(SystemExit) as exception_info:
             ez_outlet.main(args)
 
-        assert exception_info.value.message == EXIT_CODE_PARSER_ERR
+        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
         assert re.search(".*: error: unrecognized arguments: {0}".format(bad_arg),
                          ez_outlet.sys.stderr.getvalue()) is not None
@@ -168,7 +168,7 @@ class TestEzOutletReset(unittest.TestCase):
         with pytest.raises(SystemExit) as exception_info:
             ez_outlet.main(args)
 
-        assert exception_info.value.message == EXIT_CODE_PARSER_ERR
+        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
         assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME,
                                                        ez_outlet.RESET_TIME_NEGATIVE_ERROR_MESSAGE),
@@ -199,7 +199,7 @@ class TestEzOutletReset(unittest.TestCase):
             ez_outlet.main(args)
 
         # Then
-        assert exception_info.value.message == EXIT_CODE_PARSER_ERR
+        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
         assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME, self.arbitrary_msg_1),
                          ez_outlet.sys.stderr.getvalue()) is not None
@@ -231,7 +231,7 @@ class TestEzOutletReset(unittest.TestCase):
             ez_outlet.main(args)
 
         # Then
-        assert exception_info.value.message == EXIT_CODE_ERR
+        assert exception_info.value.code == EXIT_CODE_ERR
 
         assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME, self.arbitrary_msg_2),
                          ez_outlet.sys.stderr.getvalue()) is not None
@@ -265,7 +265,7 @@ class TestEzOutletReset(unittest.TestCase):
             ez_outlet.main(args)
 
         # Then
-        assert exception_info.value.message == EXIT_CODE_ERR
+        assert exception_info.value.code == EXIT_CODE_ERR
 
         assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME,
                                                        ez_outlet.UNHANDLED_ERROR_MESSAGE.format(
