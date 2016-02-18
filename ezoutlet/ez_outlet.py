@@ -10,7 +10,10 @@ import os
 import sys
 import time
 import traceback
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 import requests
 
