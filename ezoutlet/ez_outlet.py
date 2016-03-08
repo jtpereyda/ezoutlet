@@ -3,6 +3,7 @@
 # of the MIT license.  See the LICENSE file for details.
 
 from __future__ import print_function
+from __future__ import unicode_literals
 from future.utils import raise_
 
 import argparse
