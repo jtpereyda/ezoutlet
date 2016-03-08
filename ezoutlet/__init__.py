@@ -3,4 +3,4 @@
 # of the MIT license.  See the LICENSE file for details.
 from .ez_outlet import EzOutlet, EzOutletError, EzOutletUsageError, main
 
-__version__ = '0.0.1-dev2'
+__version__ = '0.0.1-dev3'
