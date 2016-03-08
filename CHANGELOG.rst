@@ -1,17 +1,14 @@
-Upcoming
-========
+0.0.1-dev3
+==========
 
 -  Unit tests refactored for clarity and flexibility.
 -  API updates:
    * EzOutletReset is now EzOutlet.
    * EzOutlet: reset-specific arguments moved from constructor to reset().
-
-0.0.1-dev3
-==========
-
 -  Added badges for build and version.
 -  Doc fixes: LICENSE.txt, setup.py
 -  Fixed some failing unit tests.
+-  Now Python 3 compatible!
 
 0.0.1-dev2
 ==========
