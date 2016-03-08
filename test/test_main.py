@@ -7,22 +7,34 @@ from __future__ import unicode_literals
 
 import io
 import re
+import sys
 import unittest
-
-import pytest
-
 try:
+    # mock in Python 2, unittest.mock in Python 3
     import unittest.mock as mock
 except ImportError:
     # mock is required as an extras_require:
     # noinspection PyPackageRequirements
     import mock
 
+import pytest
+
 from ezoutlet import ez_outlet
 
 EXIT_CODE_ERR = 1
 EXIT_CODE_PARSER_ERR = 2
 EZ_OUTLET_RESET_DEFAULT_WAIT_TIME = ez_outlet.EzOutlet.DEFAULT_WAIT_TIME
+
+
+class Py23StringIO(io.StringIO):
+    def __init__(self, *args, **kwargs):
+        super(Py23StringIO, self).__init__(*args, **kwargs)
+
+    def write(self, *args, **kwargs):
+        # Convert first argument from bytes (Python 2 str) to unicode (Python 3 str)
+        if args and isinstance(args[0], bytes):
+            args = (args[0].decode(sys.getdefaultencoding()),) + args[1:]
+        super(Py23StringIO, self).write(*args, **kwargs)
 
 
 class TestEzOutletReset(unittest.TestCase):
@@ -113,7 +125,7 @@ class TestEzOutletReset(unittest.TestCase):
         assert ez_outlet.sys.stderr.getvalue() == ''
 
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23StringIO())
     def test_main_missing_target(self):
         """
         Given: Mock EzOutlet.
