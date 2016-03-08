@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 
 import io
 import re
-import sys
 import unittest
 try:
     # mock in Python 2, unittest.mock in Python 3
@@ -16,6 +15,17 @@ except ImportError:
     # mock is required as an extras_require:
     # noinspection PyPackageRequirements
     import mock
+try:
+    # Choose StringIO implementation based on Python version in use.
+    # StringIO should work for Python 2, but not 3.
+    # Why:
+    # Hybrid-safe code should not need StringIO.StringIO, unless:
+    #  - You want to mock out sys.stdout/stderr using io.StringIO, but
+    #  - You use a non hybrid-safe dependent library that confuses
+    #    bytes/unicode/str (Python 2 argparse does this, for example).
+    from StringIO import StringIO as Py23FlexibleStringIO
+except ImportError:
+    from io import StringIO as Py23FlexibleStringIO
 
 import pytest
 
@@ -24,70 +34,6 @@ from ezoutlet import ez_outlet
 EXIT_CODE_ERR = 1
 EXIT_CODE_PARSER_ERR = 2
 EZ_OUTLET_RESET_DEFAULT_WAIT_TIME = ez_outlet.EzOutlet.DEFAULT_WAIT_TIME
-
-
-class Py23StringIO(io.StringIO):
-    """Specialization of io.StringIO that accepts str/bytes in Python 2.
-
-    Designed to be used as a unit test mock to abstract sys.stdout and stderr.
-
-    This is useful when:
-     - Writing a hybrid Python 2 and 3 module,
-     - Using a dependent module that uses sys.stdout, sys.stderr, or another
-       StringIO.StringIO style object,
-     - Writing a test that mocks out stdout/stderr, and
-     - You want to use the same object in Python 2 and 3 to replace stdout/err.
-
-    This is necessary because, in Python 2, stdout/err accept both byte and
-    unicode types. In Python 3, only unicode is allowed. So in Python 2,
-    StringIO.StringIO will give you the best mocking behavior; in Python 3,
-    io.StringIO will give you the best behavior. This class is the glue.
-    """
-    def __init__(self, *args, **kwargs):
-        super(Py23StringIO, self).__init__(*args, **kwargs)
-
-    def write(self, *args, **kwargs):
-        """Normalize str/unicode for io.StringIO in Python 2.
-
-        If Python 2: Convert first argument from str to unicode and call
-        superclass write().
-
-        If Python 3: Just call superclass write().
-
-        :param args: args for superclass write()
-        :param kwargs: kwargs for superclass write()
-        :return: Result of superclass write().
-        """
-        normalized_args = self._py23_normalize_args_0(args)
-        return super(Py23StringIO, self).write(*normalized_args, **kwargs)
-
-    @staticmethod
-    def _py23_normalize_args_0(args):
-        if Py23StringIO._python2_style_strings():
-            return Py23StringIO._args_0_to_unicode(args)
-        else:
-            return args
-
-    @staticmethod
-    def _python2_style_strings():
-        """Return True if str is alias for bytes (Py2); False otherwise (Py3).
-        """
-        return str == bytes
-
-    @staticmethod
-    def _args_0_to_unicode(args):
-        """Return new args with zeroth item converted from bytes to unicode.
-
-        If zeroth item is non-existent or not a bytes, return args.
-
-        :param args: Arguments tuple to modify
-        :type args: tuple
-        :return: New arguments tuple.
-        """
-        if args and isinstance(args[0], bytes):
-            return (args[0].decode(sys.getdefaultencoding()),) + args[1:]
-        else:
-            return args
 
 
 class TestEzOutletReset(unittest.TestCase):
@@ -177,8 +123,8 @@ class TestEzOutletReset(unittest.TestCase):
         assert ez_outlet.sys.stdout.getvalue() == ''
         assert ez_outlet.sys.stderr.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
     def test_main_missing_target(self):
         """
         Given: Mock EzOutlet.
@@ -200,8 +146,8 @@ class TestEzOutletReset(unittest.TestCase):
 
         assert ez_outlet.sys.stdout.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
     def test_main_unknown_arg(self, ):
         """
         Given: Mock EzOutlet.
