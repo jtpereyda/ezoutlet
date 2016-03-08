@@ -8,7 +8,7 @@
 -  Added badges for build and version.
 -  Doc fixes: LICENSE.txt, setup.py
 -  Fixed some failing unit tests.
--  Now Python 3 compatible!
+-  Now Python 3 compatible, with universal wheel!
 
 0.0.1-dev2
 ==========
