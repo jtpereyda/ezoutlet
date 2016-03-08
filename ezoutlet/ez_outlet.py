@@ -3,13 +3,18 @@
 # of the MIT license.  See the LICENSE file for details.
 
 from __future__ import print_function
+from __future__ import unicode_literals
+from future.utils import raise_
 
 import argparse
 import os
 import sys
 import time
 import traceback
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 import requests
 
@@ -135,9 +140,9 @@ class EzOutlet:
                                 timeout=self._timeout,
                                 proxies={"http": None, "https": None}).text
         except requests.exceptions.ConnectTimeout:
-            raise EzOutletError(self.NO_RESPONSE_MSG.format(self._timeout)), \
-                None, \
-                sys.exc_info()[2]
+            raise_(EzOutletError(self.NO_RESPONSE_MSG.format(self._timeout)),
+                   None,
+                   sys.exc_info()[2])
 
     def _check_response_raise_if_unexpected(self, response):
         """Raise if response is unexpected.
@@ -201,12 +206,12 @@ def _print_error(msg):
 
 def _usage_error(exception):
     _print_usage()
-    _print_error(msg=exception.message)
+    _print_error(msg=exception)
     sys.exit(EXIT_CODE_PARSER_ERR)
 
 
 def _handle_error(exception):
-    _print_error(msg=exception.message)
+    _print_error(msg=exception)
     sys.exit(EXIT_CODE_ERR)
 
 

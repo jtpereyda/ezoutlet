@@ -2,18 +2,32 @@
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 
-import StringIO
+from __future__ import print_function
+from __future__ import unicode_literals
+
+import io
 import re
 import unittest
-
-import pytest
-
 try:
+    # mock in Python 2, unittest.mock in Python 3
     import unittest.mock as mock
 except ImportError:
     # mock is required as an extras_require:
     # noinspection PyPackageRequirements
     import mock
+try:
+    # Choose StringIO implementation based on Python version in use.
+    # StringIO should work for Python 2, but not 3.
+    # Why:
+    # Hybrid-safe code should not need StringIO.StringIO, unless:
+    #  - You want to mock out sys.stdout/stderr using io.StringIO, but
+    #  - You use a non hybrid-safe dependent library that confuses
+    #    bytes/unicode/str (Python 2 argparse does this, for example).
+    from StringIO import StringIO as Py23FlexibleStringIO
+except ImportError:
+    from io import StringIO as Py23FlexibleStringIO
+
+import pytest
 
 from ezoutlet import ez_outlet
 
@@ -35,8 +49,8 @@ class TestEzOutletReset(unittest.TestCase):
     expected_response_contents = ez_outlet.EzOutlet.EXPECTED_RESPONSE_CONTENTS
     unexpected_response_contents = '1,0'
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.EzOutlet')
     def test_main_basic(self, mock_ez_outlet):
         """
@@ -61,8 +75,8 @@ class TestEzOutletReset(unittest.TestCase):
         assert ez_outlet.sys.stdout.getvalue() == ''
         assert ez_outlet.sys.stderr.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.EzOutlet')
     def test_main_reset_time_long(self, mock_ez_outlet):
         """
@@ -85,8 +99,8 @@ class TestEzOutletReset(unittest.TestCase):
         assert ez_outlet.sys.stdout.getvalue() == ''
         assert ez_outlet.sys.stderr.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.EzOutlet')
     def test_main_reset_time_short(self, mock_ez_outlet):
         """
@@ -109,8 +123,8 @@ class TestEzOutletReset(unittest.TestCase):
         assert ez_outlet.sys.stdout.getvalue() == ''
         assert ez_outlet.sys.stderr.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
     def test_main_missing_target(self):
         """
         Given: Mock EzOutlet.
@@ -124,14 +138,16 @@ class TestEzOutletReset(unittest.TestCase):
         with pytest.raises(SystemExit) as exception_info:
             ez_outlet.main(args)
 
-        assert exception_info.value.message == EXIT_CODE_PARSER_ERR
+        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
-        assert re.search(".*: error: too few arguments", ez_outlet.sys.stderr.getvalue()) is not None
+        # Error message differs between Python 2 and 3 versions of argparse
+        assert re.search(".*: (error: too few arguments|the following arguments are required:)",
+                         ez_outlet.sys.stderr.getvalue()) is not None
 
         assert ez_outlet.sys.stdout.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
     def test_main_unknown_arg(self, ):
         """
         Given: Mock EzOutlet.
@@ -146,14 +162,14 @@ class TestEzOutletReset(unittest.TestCase):
         with pytest.raises(SystemExit) as exception_info:
             ez_outlet.main(args)
 
-        assert exception_info.value.message == EXIT_CODE_PARSER_ERR
+        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
         assert re.search(".*: error: unrecognized arguments: {0}".format(bad_arg),
                          ez_outlet.sys.stderr.getvalue()) is not None
         assert ez_outlet.sys.stdout.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     def test_main_reset_time_negative(self):
         """
         Given: Mock EzOutlet.
@@ -168,7 +184,7 @@ class TestEzOutletReset(unittest.TestCase):
         with pytest.raises(SystemExit) as exception_info:
             ez_outlet.main(args)
 
-        assert exception_info.value.message == EXIT_CODE_PARSER_ERR
+        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
         assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME,
                                                        ez_outlet.RESET_TIME_NEGATIVE_ERROR_MESSAGE),
@@ -177,8 +193,8 @@ class TestEzOutletReset(unittest.TestCase):
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch.object(ez_outlet._Parser, 'parse_args',
                        side_effect=ez_outlet.EzOutletUsageError(arbitrary_msg_1))
     def test_error_handling_ez_outlet_reset_usage_error(self, mock_parser):
@@ -199,7 +215,7 @@ class TestEzOutletReset(unittest.TestCase):
             ez_outlet.main(args)
 
         # Then
-        assert exception_info.value.message == EXIT_CODE_PARSER_ERR
+        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
         assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME, self.arbitrary_msg_1),
                          ez_outlet.sys.stderr.getvalue()) is not None
@@ -209,8 +225,8 @@ class TestEzOutletReset(unittest.TestCase):
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch.object(ez_outlet.EzOutlet, 'reset',
                        side_effect=ez_outlet.EzOutletError(arbitrary_msg_2))
     def test_error_handling_ez_outlet_reset_error(self, mock_ez_outlet):
@@ -231,7 +247,7 @@ class TestEzOutletReset(unittest.TestCase):
             ez_outlet.main(args)
 
         # Then
-        assert exception_info.value.message == EXIT_CODE_ERR
+        assert exception_info.value.code == EXIT_CODE_ERR
 
         assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME, self.arbitrary_msg_2),
                          ez_outlet.sys.stderr.getvalue()) is not None
@@ -241,8 +257,8 @@ class TestEzOutletReset(unittest.TestCase):
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=StringIO.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=StringIO.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch.object(ez_outlet.EzOutlet, 'reset',
                        side_effect=Exception(arbitrary_msg_2))
     def test_error_handling_unhandled_error(self, mock_ez_outlet):
@@ -265,7 +281,7 @@ class TestEzOutletReset(unittest.TestCase):
             ez_outlet.main(args)
 
         # Then
-        assert exception_info.value.message == EXIT_CODE_ERR
+        assert exception_info.value.code == EXIT_CODE_ERR
 
         assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME,
                                                        ez_outlet.UNHANDLED_ERROR_MESSAGE.format(
