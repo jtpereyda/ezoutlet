@@ -31,9 +31,10 @@ class Py23StringIO(io.StringIO):
         super(Py23StringIO, self).__init__(*args, **kwargs)
 
     def write(self, *args, **kwargs):
-        # Convert first argument from bytes (Python 2 str) to unicode (Python 3 str)
-        if args and isinstance(args[0], bytes):
-            args = (args[0].decode(sys.getdefaultencoding()),) + args[1:]
+        if str == bytes:  # if Python 2 style strings
+            # Convert first argument from bytes (Python 2 str) to unicode (Python 3 str)
+            if args and isinstance(args[0], bytes):
+                args = (args[0].decode(sys.getdefaultencoding()),) + args[1:]
         super(Py23StringIO, self).write(*args, **kwargs)
 
 
