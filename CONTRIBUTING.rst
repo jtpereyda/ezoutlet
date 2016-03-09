@@ -72,7 +72,7 @@ Checks
 
       python setup.py sdist bdist_wheel
 
-4. Visually inspect source distribution for correctness.
+4. Visually inspect wheel distribution for correctness.
 
 Release
 +++++++
