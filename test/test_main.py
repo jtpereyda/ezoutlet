@@ -8,6 +8,9 @@ from __future__ import unicode_literals
 import io
 import re
 import unittest
+
+import sys
+
 try:
     # mock in Python 2, unittest.mock in Python 3
     import unittest.mock as mock
@@ -63,7 +66,7 @@ class TestEzOutletReset(unittest.TestCase):
          and: STDERR is silent.
         """
         hostname = '255.254.253.252'
-        args = ['ez_outlet.py', hostname]
+        args = ['ez_outlet.py', 'reset', hostname]
 
         ez_outlet.main(args)
 
@@ -90,7 +93,7 @@ class TestEzOutletReset(unittest.TestCase):
         """
         hostname = '255.254.253.252'
         wait_time = 77
-        args = ['ez_outlet.py', hostname, ez_outlet.RESET_TIME_ARG_LONG, str(wait_time)]
+        args = ['ez_outlet.py', 'reset', hostname, ez_outlet.RESET_TIME_ARG_LONG, str(wait_time)]
 
         ez_outlet.main(args)
 
@@ -114,7 +117,7 @@ class TestEzOutletReset(unittest.TestCase):
         """
         hostname = '255.254.253.252'
         wait_time = 1
-        args = ['ez_outlet.py', hostname, ez_outlet.RESET_TIME_ARG_SHORT, str(wait_time)]
+        args = ['ez_outlet.py', 'reset', hostname, ez_outlet.RESET_TIME_ARG_SHORT, str(wait_time)]
 
         ez_outlet.main(args)
 
@@ -133,7 +136,7 @@ class TestEzOutletReset(unittest.TestCase):
          and: STDERR includes ".*: error: too few arguments"
          and: STDOUT is silent.
         """
-        args = ['ez_outlet.py']
+        args = ['ez_outlet.py', 'reset']
 
         with pytest.raises(SystemExit) as exception_info:
             ez_outlet.main(args)
@@ -142,6 +145,77 @@ class TestEzOutletReset(unittest.TestCase):
 
         # Error message differs between Python 2 and 3 versions of argparse
         assert re.search(".*: (error: too few arguments|the following arguments are required:)",
+                         ez_outlet.sys.stderr.getvalue()) is not None
+
+        assert ez_outlet.sys.stdout.getvalue() == ''
+
+    @pytest.mark.skipif(sys.version_info >= (3, 3),
+                        reason="Behavior differs based on version.")
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
+    def test_main_missing_cmd_py2(self):
+        """
+        Given: Mock EzOutlet.
+        When: Calling main() with no arguments.
+        Then: SystemExit is raised with code EXIT_CODE_PARSER_ERR
+         and: STDERR includes ".*: error: too few arguments"
+         and: STDOUT is silent.
+        """
+        args = ['ez_outlet.py']
+
+        with pytest.raises(SystemExit) as exception_info:
+            ez_outlet.main(args)
+
+        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
+
+        assert re.search(".*: (error: too few arguments)",
+                         ez_outlet.sys.stderr.getvalue()) is not None
+
+        assert ez_outlet.sys.stdout.getvalue() == ''
+
+    @pytest.mark.skipif(sys.version_info < (3, 3),
+                        reason="Behavior differs based on version.")
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
+    def test_main_missing_cmd_py3(self):
+        """
+        Given: Mock EzOutlet.
+        When: Calling main() with no arguments.
+        Then: SystemExit is raised with code EXIT_CODE_PARSER_ERR
+         and: STDERR includes ".*: error: too few arguments"
+         and: STDOUT is silent.
+        """
+        args = ['ez_outlet.py']
+
+        ez_outlet.main(args)
+
+        err_msg = ez_outlet.sys.stderr.getvalue()
+
+        assert re.search("usage:", err_msg) is not None
+        assert re.search("positional arguments:", err_msg) is not None
+        assert re.search("optional arguments:", err_msg) is not None
+
+        assert ez_outlet.sys.stdout.getvalue() == ''
+
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
+    def test_main_unknown_cmd(self):
+        """
+        Given: Mock EzOutlet.
+        When: Calling main() with no arguments.
+        Then: SystemExit is raised with code EXIT_CODE_PARSER_ERR
+         and: STDERR includes ".*: error: argument subcommand: invalid choice:"
+         and: STDOUT is silent.
+        """
+        args = ['ez_outlet.py', 'someUnknownCommand']
+
+        with pytest.raises(SystemExit) as exception_info:
+            ez_outlet.main(args)
+
+        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
+
+        # Error message differs between Python 2 and 3 versions of argparse
+        assert re.search(".*: (error: argument subcommand: invalid choice:)",
                          ez_outlet.sys.stderr.getvalue()) is not None
 
         assert ez_outlet.sys.stdout.getvalue() == ''
@@ -157,7 +231,7 @@ class TestEzOutletReset(unittest.TestCase):
          and: STDOUT is silent.
         """
         bad_arg = '--blab'
-        args = ['ez_outlet.py', '1.2.3.4', bad_arg]
+        args = ['ez_outlet.py', 'reset', '1.2.3.4', bad_arg]
 
         with pytest.raises(SystemExit) as exception_info:
             ez_outlet.main(args)
@@ -168,8 +242,8 @@ class TestEzOutletReset(unittest.TestCase):
                          ez_outlet.sys.stderr.getvalue()) is not None
         assert ez_outlet.sys.stdout.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
     def test_main_reset_time_negative(self):
         """
         Given: Mock EzOutlet.
@@ -179,7 +253,7 @@ class TestEzOutletReset(unittest.TestCase):
                                                       ez_outlet.RESET_TIME_NEGATIVE_ERROR_MESSAGE)
          and: STDOUT is silent.
         """
-        args = ['ez_outlet.py', '1.2.3.4', ez_outlet.RESET_TIME_ARG_LONG, str(-1)]
+        args = ['ez_outlet.py', 'reset', '1.2.3.4', ez_outlet.RESET_TIME_ARG_LONG, str(-1)]
 
         with pytest.raises(SystemExit) as exception_info:
             ez_outlet.main(args)
@@ -193,8 +267,8 @@ class TestEzOutletReset(unittest.TestCase):
 
     # Suppress since PyCharm doesn't recognize @mock.patch.object
     # noinspection PyUnresolvedReferences
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
     @mock.patch.object(ez_outlet._Parser, 'parse_args',
                        side_effect=ez_outlet.EzOutletUsageError(arbitrary_msg_1))
     def test_error_handling_ez_outlet_reset_usage_error(self, mock_parser):
@@ -208,7 +282,7 @@ class TestEzOutletReset(unittest.TestCase):
           and: STDOUT is silent.
           and: Mock ez_outlet._Parser.parse_args() was called.
         """
-        args = ['ez_outlet.py', '1.2.3.4']
+        args = ['ez_outlet.py', 'reset', '1.2.3.4']
 
         # When
         with pytest.raises(SystemExit) as exception_info:
@@ -240,7 +314,7 @@ class TestEzOutletReset(unittest.TestCase):
           and: STDOUT is silent.
           and: Mock ez_outlet.EzOutlet.reset() was called.
         """
-        args = ['ez_outlet.py', '1.2.3.4']
+        args = ['ez_outlet.py', 'reset', '1.2.3.4']
 
         # When
         with pytest.raises(SystemExit) as exception_info:
@@ -274,7 +348,7 @@ class TestEzOutletReset(unittest.TestCase):
           and: STDOUT is silent.
           and: Mock ez_outlet.EzOutlet.reset() was called.
         """
-        args = ['ez_outlet.py', '1.2.3.4']
+        args = ['ez_outlet.py', 'reset', '1.2.3.4']
 
         # When
         with pytest.raises(SystemExit) as exception_info:

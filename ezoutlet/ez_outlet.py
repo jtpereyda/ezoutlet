@@ -6,11 +6,13 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from future.utils import raise_
 
+import abc
 import argparse
 import os
 import sys
 import time
 import traceback
+
 try:
     import urlparse
 except ImportError:
@@ -172,8 +174,16 @@ class EzOutlet:
 class _Parser(object):
     def __init__(self):
         self._parser = argparse.ArgumentParser(description=HELP_TEXT)
-        self._parser.add_argument('target', help=HELP_TEXT_TARGET_ARG)
-        self._parser.add_argument(RESET_TIME_ARG_LONG, RESET_TIME_ARG_SHORT,
+        # self._parser.add_argument('target', help=HELP_TEXT_TARGET_ARG)
+        # self._parser.add_argument(RESET_TIME_ARG_LONG, RESET_TIME_ARG_SHORT,
+        subparsers = self._parser.add_subparsers(dest='subcommand')
+
+        self._add_reset_parser(subparsers)
+
+    def _add_reset_parser(self, subparsers):
+        parser_reset = subparsers.add_parser('reset', help='TODO reset help text')
+        parser_reset.add_argument('target', help=HELP_TEXT_TARGET_ARG)
+        parser_reset.add_argument(RESET_TIME_ARG_LONG, RESET_TIME_ARG_SHORT,
                                   type=float,
                                   default=0,
                                   help=HELP_TEXT_RESET_TIME_ARG)
@@ -181,23 +191,62 @@ class _Parser(object):
     def get_usage(self):
         return self._parser.format_usage()
 
+    def get_help(self):
+        return self._parser.format_help()
+
     def parse_args(self, argv):
-        parsed_args = self._parser.parse_args(argv[1:])
+        return self._parser.parse_args(argv[1:])
 
-        self._check_args(parsed_args)
 
-        return parsed_args
+class _ICommand(object):
+    """ Interface for Commands for this application.
 
-    @staticmethod
-    def _check_args(parsed_args):
-        if parsed_args.reset_time < 0:
+    Implementors: Parsed arguments from argparse should be taken and checked
+    for validity in the constructor.
+    """
+    @abc.abstractmethod
+    def run(self):
+        """ Run the command. """
+
+
+class _ResetCommand(_ICommand):
+    def __init__(self, parsed_args):
+        self._args = parsed_args
+        self._check_args()
+
+    def _check_args(self):
+        if self._args.reset_time < 0:
             raise EzOutletUsageError(RESET_TIME_NEGATIVE_ERROR_MESSAGE)
+
+    def run(self):
+        ez_outlet = EzOutlet(hostname=self._args.target)
+        ez_outlet.reset(post_reset_delay=self._args.reset_time)
+
+
+class _NoCommand(_ICommand):
+    def __init__(self, parsed_args):
+        self._args = parsed_args
+
+    def run(self):
+        _print_help()
+
+
+def _command_factory(subcommand, parsed_args):
+    if subcommand == 'reset':
+        return _ResetCommand(parsed_args=parsed_args)
+    else:
+        return _NoCommand(parsed_args=parsed_args)
+
 
 _parser = _Parser()
 
 
 def _print_usage():
     print(_parser.get_usage(), file=sys.stderr)
+
+
+def _print_help():
+    print(_parser.get_help(), file=sys.stderr)
 
 
 def _print_error(msg):
@@ -223,8 +272,8 @@ def _handle_unexpected_error(exception):
 
 def _parse_args_and_reset(argv):
     parsed_args = _parser.parse_args(argv)
-    ez_outlet = EzOutlet(hostname=parsed_args.target)
-    ez_outlet.reset(post_reset_delay=parsed_args.reset_time)
+    cmd = _command_factory(parsed_args.subcommand, parsed_args)
+    cmd.run()
 
 
 def main(argv):
