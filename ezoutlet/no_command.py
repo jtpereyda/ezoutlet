@@ -6,9 +6,13 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-class EzOutletError(Exception):
-    pass
+from .icommand import ICommand
+from .parser import print_help
 
 
-class EzOutletUsageError(EzOutletError):
-    pass
+class NoCommand(ICommand):
+    def __init__(self, parsed_args):
+        self._args = parsed_args
+
+    def run(self):
+        print_help()

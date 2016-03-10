@@ -5,12 +5,10 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
+from future.utils import raise_
 
 import sys
 import time
-import traceback
-
-from future.utils import raise_
 
 try:
     import urlparse
@@ -19,11 +17,8 @@ except ImportError:
 
 import requests
 
-
 from . import constants
-from .exceptions import EzOutletError, EzOutletUsageError
-from .icommand import ICommand
-from .parser import Parser
+from . import exceptions
 
 
 def _get_url(hostname, path):
@@ -115,9 +110,10 @@ class EzOutlet:
                                 timeout=self._timeout,
                                 proxies={"http": None, "https": None}).text
         except requests.exceptions.ConnectTimeout:
-            raise_(EzOutletError(self.NO_RESPONSE_MSG.format(self._timeout)),
-                   None,
-                   sys.exc_info()[2])
+            raise_(exceptions.EzOutletError(
+                self.NO_RESPONSE_MSG.format(self._timeout)),
+                None,
+                sys.exc_info()[2])
 
     def _check_response_raise_if_unexpected(self, response):
         """Raise if response is unexpected.
@@ -133,7 +129,8 @@ class EzOutlet:
                   EzOutletReset.EXPECTED_RESPONSE_CONTENTS)
         """
         if response != self.EXPECTED_RESPONSE_CONTENTS:
-            raise EzOutletError(self.UNEXPECTED_RESPONSE_MSG.format(response))
+            raise exceptions.EzOutletError(
+                self.UNEXPECTED_RESPONSE_MSG.format(response))
 
     @staticmethod
     def _wait_for_reset(total_delay):
@@ -142,87 +139,3 @@ class EzOutlet:
         Returns: None
         """
         time.sleep(total_delay)
-
-
-class _ResetCommand(ICommand):
-    def __init__(self, parsed_args):
-        self._args = parsed_args
-        self._check_args()
-
-    def _check_args(self):
-        if self._args.reset_time < 0:
-            raise EzOutletUsageError(constants.RESET_TIME_NEGATIVE_ERROR_MESSAGE)
-
-    def run(self):
-        ez_outlet = EzOutlet(hostname=self._args.target)
-        ez_outlet.reset(post_reset_delay=self._args.reset_time)
-
-
-class _NoCommand(ICommand):
-    def __init__(self, parsed_args):
-        self._args = parsed_args
-
-    def run(self):
-        _print_help()
-
-
-def _command_factory(subcommand, parsed_args):
-    if subcommand == 'reset':
-        return _ResetCommand(parsed_args=parsed_args)
-    else:
-        # Note: In Python 2, argparse will raise a SystemException when no
-        # command is given, so this bit is for Python 3.
-        return _NoCommand(parsed_args=parsed_args)
-
-
-_parser = Parser()
-
-
-def _print_usage():
-    print(_parser.get_usage(), file=sys.stderr)
-
-
-def _print_help():
-    print(_parser.get_help(), file=sys.stderr)
-
-
-def _print_error(msg):
-    print(constants.ERROR_STRING.format(constants.PROGRAM_NAME, msg), file=sys.stderr)
-
-
-def _usage_error(exception):
-    _print_usage()
-    _print_error(msg=exception)
-    sys.exit(constants.EXIT_CODE_PARSER_ERR)
-
-
-def _handle_error(exception):
-    _print_error(msg=exception)
-    sys.exit(constants.EXIT_CODE_ERR)
-
-
-def _handle_unexpected_error(exception):
-    _ = exception  # exception gets printed by traceback.format_exc()
-    _print_error(msg=constants.UNHANDLED_ERROR_MESSAGE.format(traceback.format_exc()))
-    sys.exit(constants.EXIT_CODE_ERR)
-
-
-def _parse_args_and_run(argv):
-    parsed_args = _parser.parse_args(argv)
-    cmd = _command_factory(parsed_args.subcommand, parsed_args)
-    cmd.run()
-
-
-def main(argv):
-    try:
-        _parse_args_and_run(argv)
-    except EzOutletUsageError as e:
-        _usage_error(e)
-    except EzOutletError as e:
-        _handle_error(e)
-    except Exception as e:
-        _handle_unexpected_error(e)
-
-
-if __name__ == "__main__":
-    main(sys.argv)

@@ -1,7 +1,67 @@
 # Copyright (C) 2015 Schweitzer Engineering Laboratories, Inc.
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
-from .ez_outlet import EzOutlet, EzOutletUsageError, main
-from ezoutlet.exceptions import EzOutletError, EzOutletUsageError
+
+from __future__ import absolute_import
+from __future__ import print_function
+from __future__ import unicode_literals
+
+import sys
+import traceback
+
+from ezoutlet.parser import static_parser, print_usage
+from . import constants
+from .exceptions import EzOutletError, EzOutletUsageError
+from .ez_outlet import EzOutlet
+from .no_command import NoCommand
+from .parser import Parser
+from .reset_command import ResetCommand
 
 __version__ = '0.0.1-dev3'
+
+
+def _command_factory(subcommand, parsed_args):
+    if subcommand == 'reset':
+        return ResetCommand(parsed_args=parsed_args)
+    else:
+        # Note: In Python 2, argparse will raise a SystemException when no
+        # command is given, so this bit is for Python 3.
+        return NoCommand(parsed_args=parsed_args)
+
+
+def _parse_args_and_run(argv):
+    parsed_args = static_parser.parse_args(argv)
+    cmd = _command_factory(parsed_args.subcommand, parsed_args)
+    cmd.run()
+
+
+def _print_error(msg):
+    print(constants.ERROR_STRING.format(constants.PROGRAM_NAME, msg), file=sys.stderr)
+
+
+def _usage_error(exception):
+    print_usage()
+    _print_error(msg=exception)
+    sys.exit(constants.EXIT_CODE_PARSER_ERR)
+
+
+def _handle_error(exception):
+    _print_error(msg=exception)
+    sys.exit(constants.EXIT_CODE_ERR)
+
+
+def _handle_unexpected_error(exception):
+    _ = exception  # exception gets printed by traceback.format_exc()
+    _print_error(msg=constants.UNHANDLED_ERROR_MESSAGE.format(traceback.format_exc()))
+    sys.exit(constants.EXIT_CODE_ERR)
+
+
+def main(argv):
+    try:
+        _parse_args_and_run(argv)
+    except EzOutletUsageError as e:
+        _usage_error(e)
+    except EzOutletError as e:
+        _handle_error(e)
+    except Exception as e:
+        _handle_unexpected_error(e)

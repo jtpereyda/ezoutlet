@@ -11,6 +11,7 @@ import unittest
 
 import sys
 
+import ezoutlet
 import ezoutlet.constants
 import ezoutlet.exceptions
 import ezoutlet.parser
@@ -72,7 +73,7 @@ class TestMain(unittest.TestCase):
         hostname = '255.254.253.252'
         args = ['ez_outlet.py', 'reset', hostname]
 
-        ez_outlet.main(args)
+        ezoutlet.main(args)
 
         mock_ez_outlet.assert_called_once_with(hostname=hostname)
         # Duplicate reference to DEFAULT_WAIT_TIME needed because
@@ -99,7 +100,7 @@ class TestMain(unittest.TestCase):
         wait_time = 77
         args = ['ez_outlet.py', 'reset', hostname, ezoutlet.constants.RESET_TIME_ARG_LONG, str(wait_time)]
 
-        ez_outlet.main(args)
+        ezoutlet.main(args)
 
         mock_ez_outlet.assert_called_once_with(hostname=hostname)
         mock_ez_outlet.return_value.reset.assert_called_once_with(post_reset_delay=wait_time)
@@ -123,7 +124,7 @@ class TestMain(unittest.TestCase):
         wait_time = 1
         args = ['ez_outlet.py', 'reset', hostname, ezoutlet.constants.RESET_TIME_ARG_SHORT, str(wait_time)]
 
-        ez_outlet.main(args)
+        ezoutlet.main(args)
 
         mock_ez_outlet.assert_called_once_with(hostname=hostname)
         mock_ez_outlet.return_value.reset.assert_called_once_with(post_reset_delay=wait_time)
@@ -143,7 +144,7 @@ class TestMain(unittest.TestCase):
         args = ['ez_outlet.py', 'reset']
 
         with pytest.raises(SystemExit) as exception_info:
-            ez_outlet.main(args)
+            ezoutlet.main(args)
 
         assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
@@ -168,7 +169,7 @@ class TestMain(unittest.TestCase):
         args = ['ez_outlet.py']
 
         with pytest.raises(SystemExit) as exception_info:
-            ez_outlet.main(args)
+            ezoutlet.main(args)
 
         assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
@@ -191,7 +192,7 @@ class TestMain(unittest.TestCase):
         """
         args = ['ez_outlet.py']
 
-        ez_outlet.main(args)
+        ezoutlet.main(args)
 
         err_msg = ez_outlet.sys.stderr.getvalue()
 
@@ -214,7 +215,7 @@ class TestMain(unittest.TestCase):
         args = ['ez_outlet.py', 'someUnknownCommand']
 
         with pytest.raises(SystemExit) as exception_info:
-            ez_outlet.main(args)
+            ezoutlet.main(args)
 
         assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
@@ -238,7 +239,7 @@ class TestMain(unittest.TestCase):
         args = ['ez_outlet.py', 'reset', '1.2.3.4', bad_arg]
 
         with pytest.raises(SystemExit) as exception_info:
-            ez_outlet.main(args)
+            ezoutlet.main(args)
 
         assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
@@ -260,7 +261,7 @@ class TestMain(unittest.TestCase):
         args = ['ez_outlet.py', 'reset', '1.2.3.4', ezoutlet.constants.RESET_TIME_ARG_LONG, str(-1)]
 
         with pytest.raises(SystemExit) as exception_info:
-            ez_outlet.main(args)
+            ezoutlet.main(args)
 
         assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
@@ -290,7 +291,7 @@ class TestMain(unittest.TestCase):
 
         # When
         with pytest.raises(SystemExit) as exception_info:
-            ez_outlet.main(args)
+            ezoutlet.main(args)
 
         # Then
         assert exception_info.value.code == EXIT_CODE_PARSER_ERR
@@ -322,7 +323,7 @@ class TestMain(unittest.TestCase):
 
         # When
         with pytest.raises(SystemExit) as exception_info:
-            ez_outlet.main(args)
+            ezoutlet.main(args)
 
         # Then
         assert exception_info.value.code == EXIT_CODE_ERR
@@ -356,7 +357,7 @@ class TestMain(unittest.TestCase):
 
         # When
         with pytest.raises(SystemExit) as exception_info:
-            ez_outlet.main(args)
+            ezoutlet.main(args)
 
         # Then
         assert exception_info.value.code == EXIT_CODE_ERR
