@@ -7,6 +7,8 @@ import requests
 
 import pytest
 
+import ezoutlet.exceptions
+
 try:
     import unittest.mock as mock
 except ImportError:
@@ -151,7 +153,7 @@ class TestEzOutletNoResponse(unittest.TestCase):
         try:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
-        except ez_outlet.EzOutletError:
+        except ezoutlet.exceptions.EzOutletError:
             pass  # exception tested elsewhere
 
         # Then
@@ -173,7 +175,7 @@ class TestEzOutletNoResponse(unittest.TestCase):
         self.configure_mock_requests(mock_requests=mock_requests)
 
         # When
-        with self.assertRaises(ez_outlet.EzOutletError) as e:
+        with self.assertRaises(ezoutlet.exceptions.EzOutletError) as e:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
 
@@ -197,7 +199,7 @@ class TestEzOutletNoResponse(unittest.TestCase):
         try:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
-        except ez_outlet.EzOutletError:
+        except ezoutlet.exceptions.EzOutletError:
             pass  # exception tested elsewhere
 
         # Then
@@ -247,7 +249,7 @@ class TestEzOutletUnexpectedResponse(unittest.TestCase):
         try:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
-        except ez_outlet.EzOutletError:
+        except ezoutlet.exceptions.EzOutletError:
             pass  # exception tested elsewhere
 
         # Then
@@ -269,7 +271,7 @@ class TestEzOutletUnexpectedResponse(unittest.TestCase):
         self.configure_mock_requests(mock_requests=mock_requests)
 
         # When
-        with self.assertRaises(ez_outlet.EzOutletError) as e:
+        with self.assertRaises(ezoutlet.exceptions.EzOutletError) as e:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
 
@@ -294,7 +296,7 @@ class TestEzOutletUnexpectedResponse(unittest.TestCase):
         try:
             self.uut.reset(post_reset_delay=self.post_reset_delay,
                            ez_outlet_reset_interval=self.ez_outlet_reset_interval)
-        except ez_outlet.EzOutletError:
+        except ezoutlet.exceptions.EzOutletError:
             pass  # exception tested elsewhere
 
         # Then

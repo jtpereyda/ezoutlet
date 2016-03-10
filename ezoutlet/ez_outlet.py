@@ -5,12 +5,15 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from future.utils import raise_
 
 import abc
 import sys
 import time
 import traceback
+
+from future.utils import raise_
+
+from .exceptions import EzOutletError, EzOutletUsageError
 
 try:
     import urlparse
@@ -21,14 +24,6 @@ import requests
 
 from . import constants
 from ezoutlet.parser import Parser
-
-
-class EzOutletError(Exception):
-    pass
-
-
-class EzOutletUsageError(EzOutletError):
-    pass
 
 
 def _get_url(hostname, path):

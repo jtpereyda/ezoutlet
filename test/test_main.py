@@ -12,6 +12,7 @@ import unittest
 import sys
 
 import ezoutlet.constants
+import ezoutlet.exceptions
 import ezoutlet.parser
 
 try:
@@ -273,7 +274,7 @@ class TestMain(unittest.TestCase):
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
     @mock.patch.object(ezoutlet.parser.Parser, 'parse_args',
-                       side_effect=ez_outlet.EzOutletUsageError(arbitrary_msg_1))
+                       side_effect=ezoutlet.exceptions.EzOutletUsageError(arbitrary_msg_1))
     def test_error_handling_ez_outlet_reset_usage_error(self, mock_parser):
         """
         Given: Mock ez_outlet._Parser() configured to raise on
@@ -305,7 +306,7 @@ class TestMain(unittest.TestCase):
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch.object(ez_outlet.EzOutlet, 'reset',
-                       side_effect=ez_outlet.EzOutletError(arbitrary_msg_2))
+                       side_effect=ezoutlet.exceptions.EzOutletError(arbitrary_msg_2))
     def test_error_handling_ez_outlet_reset_error(self, mock_ez_outlet):
         """
         Given: Mock ez_outlet.EzOutlet() configured to raise on
