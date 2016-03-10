@@ -2,13 +2,12 @@
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 
+from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 from future.utils import raise_
 
 import abc
-import argparse
-import os
 import sys
 import time
 import traceback
@@ -20,29 +19,8 @@ except ImportError:
 
 import requests
 
-_DEFAULT_EZ_OUTLET_RESET_INTERVAL = 3.05
-
-HELP_TEXT = (
-    """Send reset command to ezOutlet EZ-11b device; wait for on/off cycle.
-
-    Use --reset-time to wait additional time, e.g. for device reboot."""
-)
-PROGRAM_NAME = os.path.basename(__file__)
-RESET_TIME_ARG_SHORT = '-t'
-RESET_TIME_ARG_LONG = '--reset-time'
-
-HELP_TEXT_TARGET_ARG = 'IP address/hostname of ezOutlet device.'
-HELP_TEXT_RESET_TIME_ARG = 'Extra time in seconds to wait, e.g. for device reboot.' \
-                           ' Note that the script already waits {0} seconds for the' \
-                           ' ezOutlet to turn off and on.'.format(_DEFAULT_EZ_OUTLET_RESET_INTERVAL)
-
-ERROR_STRING = "{0}: error: {1}"
-UNHANDLED_ERROR_MESSAGE = "Unhandled exception! Please file bug report.\n\n{0}"
-RESET_TIME_NEGATIVE_ERROR_MESSAGE = "argument{0}/{1}: value must be non-negative.".format(RESET_TIME_ARG_LONG,
-                                                                                          RESET_TIME_ARG_SHORT)
-
-EXIT_CODE_ERR = 1
-EXIT_CODE_PARSER_ERR = 2
+from . import constants
+from ezoutlet.parser import Parser
 
 
 class EzOutletError(Exception):
@@ -68,7 +46,7 @@ class EzOutlet:
 
     It uses undocumented but simple CGI scripts.
     """
-    DEFAULT_EZ_OUTLET_RESET_INTERVAL = _DEFAULT_EZ_OUTLET_RESET_INTERVAL
+    DEFAULT_EZ_OUTLET_RESET_INTERVAL = constants.DEFAULT_EZ_OUTLET_RESET_INTERVAL
     DEFAULT_TIMEOUT = 10
     DEFAULT_WAIT_TIME = 0
     RESET_URL_PATH = '/reset.cgi'
@@ -171,33 +149,6 @@ class EzOutlet:
         time.sleep(total_delay)
 
 
-class _Parser(object):
-    def __init__(self):
-        self._parser = argparse.ArgumentParser(description=HELP_TEXT)
-        # self._parser.add_argument('target', help=HELP_TEXT_TARGET_ARG)
-        # self._parser.add_argument(RESET_TIME_ARG_LONG, RESET_TIME_ARG_SHORT,
-        subparsers = self._parser.add_subparsers(dest='subcommand')
-
-        self._add_reset_parser(subparsers)
-
-    def _add_reset_parser(self, subparsers):
-        parser_reset = subparsers.add_parser('reset', help='TODO reset help text')
-        parser_reset.add_argument('target', help=HELP_TEXT_TARGET_ARG)
-        parser_reset.add_argument(RESET_TIME_ARG_LONG, RESET_TIME_ARG_SHORT,
-                                  type=float,
-                                  default=0,
-                                  help=HELP_TEXT_RESET_TIME_ARG)
-
-    def get_usage(self):
-        return self._parser.format_usage()
-
-    def get_help(self):
-        return self._parser.format_help()
-
-    def parse_args(self, argv):
-        return self._parser.parse_args(argv[1:])
-
-
 class _ICommand(object):
     """ Interface for Commands for this application.
 
@@ -216,7 +167,7 @@ class _ResetCommand(_ICommand):
 
     def _check_args(self):
         if self._args.reset_time < 0:
-            raise EzOutletUsageError(RESET_TIME_NEGATIVE_ERROR_MESSAGE)
+            raise EzOutletUsageError(constants.RESET_TIME_NEGATIVE_ERROR_MESSAGE)
 
     def run(self):
         ez_outlet = EzOutlet(hostname=self._args.target)
@@ -240,7 +191,7 @@ def _command_factory(subcommand, parsed_args):
         return _NoCommand(parsed_args=parsed_args)
 
 
-_parser = _Parser()
+_parser = Parser()
 
 
 def _print_usage():
@@ -252,24 +203,24 @@ def _print_help():
 
 
 def _print_error(msg):
-    print(ERROR_STRING.format(PROGRAM_NAME, msg), file=sys.stderr)
+    print(constants.ERROR_STRING.format(constants.PROGRAM_NAME, msg), file=sys.stderr)
 
 
 def _usage_error(exception):
     _print_usage()
     _print_error(msg=exception)
-    sys.exit(EXIT_CODE_PARSER_ERR)
+    sys.exit(constants.EXIT_CODE_PARSER_ERR)
 
 
 def _handle_error(exception):
     _print_error(msg=exception)
-    sys.exit(EXIT_CODE_ERR)
+    sys.exit(constants.EXIT_CODE_ERR)
 
 
 def _handle_unexpected_error(exception):
     _ = exception  # exception gets printed by traceback.format_exc()
-    _print_error(msg=UNHANDLED_ERROR_MESSAGE.format(traceback.format_exc()))
-    sys.exit(EXIT_CODE_ERR)
+    _print_error(msg=constants.UNHANDLED_ERROR_MESSAGE.format(traceback.format_exc()))
+    sys.exit(constants.EXIT_CODE_ERR)
 
 
 def _parse_args_and_run(argv):

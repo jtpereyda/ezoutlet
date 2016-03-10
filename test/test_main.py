@@ -11,6 +11,9 @@ import unittest
 
 import sys
 
+import ezoutlet.constants
+import ezoutlet.parser
+
 try:
     # mock in Python 2, unittest.mock in Python 3
     import unittest.mock as mock
@@ -93,7 +96,7 @@ class TestMain(unittest.TestCase):
         """
         hostname = '255.254.253.252'
         wait_time = 77
-        args = ['ez_outlet.py', 'reset', hostname, ez_outlet.RESET_TIME_ARG_LONG, str(wait_time)]
+        args = ['ez_outlet.py', 'reset', hostname, ezoutlet.constants.RESET_TIME_ARG_LONG, str(wait_time)]
 
         ez_outlet.main(args)
 
@@ -117,7 +120,7 @@ class TestMain(unittest.TestCase):
         """
         hostname = '255.254.253.252'
         wait_time = 1
-        args = ['ez_outlet.py', 'reset', hostname, ez_outlet.RESET_TIME_ARG_SHORT, str(wait_time)]
+        args = ['ez_outlet.py', 'reset', hostname, ezoutlet.constants.RESET_TIME_ARG_SHORT, str(wait_time)]
 
         ez_outlet.main(args)
 
@@ -253,15 +256,15 @@ class TestMain(unittest.TestCase):
                                                       ez_outlet.RESET_TIME_NEGATIVE_ERROR_MESSAGE)
          and: STDOUT is silent.
         """
-        args = ['ez_outlet.py', 'reset', '1.2.3.4', ez_outlet.RESET_TIME_ARG_LONG, str(-1)]
+        args = ['ez_outlet.py', 'reset', '1.2.3.4', ezoutlet.constants.RESET_TIME_ARG_LONG, str(-1)]
 
         with pytest.raises(SystemExit) as exception_info:
             ez_outlet.main(args)
 
         assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
-        assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME,
-                                                       ez_outlet.RESET_TIME_NEGATIVE_ERROR_MESSAGE),
+        assert re.search(ezoutlet.constants.ERROR_STRING.format(ezoutlet.constants.PROGRAM_NAME,
+                                                                ezoutlet.constants.RESET_TIME_NEGATIVE_ERROR_MESSAGE),
                          ez_outlet.sys.stderr.getvalue()) is not None
         assert ez_outlet.sys.stdout.getvalue() == ''
 
@@ -269,7 +272,7 @@ class TestMain(unittest.TestCase):
     # noinspection PyUnresolvedReferences
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
-    @mock.patch.object(ez_outlet._Parser, 'parse_args',
+    @mock.patch.object(ezoutlet.parser.Parser, 'parse_args',
                        side_effect=ez_outlet.EzOutletUsageError(arbitrary_msg_1))
     def test_error_handling_ez_outlet_reset_usage_error(self, mock_parser):
         """
@@ -291,7 +294,7 @@ class TestMain(unittest.TestCase):
         # Then
         assert exception_info.value.code == EXIT_CODE_PARSER_ERR
 
-        assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME, self.arbitrary_msg_1),
+        assert re.search(ezoutlet.constants.ERROR_STRING.format(ezoutlet.constants.PROGRAM_NAME, self.arbitrary_msg_1),
                          ez_outlet.sys.stderr.getvalue()) is not None
         assert ez_outlet.sys.stdout.getvalue() == ''
 
@@ -323,7 +326,7 @@ class TestMain(unittest.TestCase):
         # Then
         assert exception_info.value.code == EXIT_CODE_ERR
 
-        assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME, self.arbitrary_msg_2),
+        assert re.search(ezoutlet.constants.ERROR_STRING.format(ezoutlet.constants.PROGRAM_NAME, self.arbitrary_msg_2),
                          ez_outlet.sys.stderr.getvalue()) is not None
         assert ez_outlet.sys.stdout.getvalue() == ''
 
@@ -357,9 +360,9 @@ class TestMain(unittest.TestCase):
         # Then
         assert exception_info.value.code == EXIT_CODE_ERR
 
-        assert re.search(ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME,
-                                                       ez_outlet.UNHANDLED_ERROR_MESSAGE.format(
-                                                                     "Traceback.*{0}.*".format(self.arbitrary_msg_2))),
+        assert re.search(ezoutlet.constants.ERROR_STRING.format(ezoutlet.constants.PROGRAM_NAME,
+                                                                ezoutlet.constants.UNHANDLED_ERROR_MESSAGE.format(
+                                                                    "Traceback.*{0}.*".format(self.arbitrary_msg_2))),
                          ez_outlet.sys.stderr.getvalue(),
                          flags=re.DOTALL) is not None
 
