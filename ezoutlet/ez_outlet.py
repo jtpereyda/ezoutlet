@@ -6,14 +6,11 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import abc
 import sys
 import time
 import traceback
 
 from future.utils import raise_
-
-from .exceptions import EzOutletError, EzOutletUsageError
 
 try:
     import urlparse
@@ -22,8 +19,11 @@ except ImportError:
 
 import requests
 
+
 from . import constants
-from ezoutlet.parser import Parser
+from .exceptions import EzOutletError, EzOutletUsageError
+from .icommand import ICommand
+from .parser import Parser
 
 
 def _get_url(hostname, path):
@@ -144,18 +144,7 @@ class EzOutlet:
         time.sleep(total_delay)
 
 
-class _ICommand(object):
-    """ Interface for Commands for this application.
-
-    Implementors: Parsed arguments from argparse should be taken and checked
-    for validity in the constructor.
-    """
-    @abc.abstractmethod
-    def run(self):
-        """ Run the command. """
-
-
-class _ResetCommand(_ICommand):
+class _ResetCommand(ICommand):
     def __init__(self, parsed_args):
         self._args = parsed_args
         self._check_args()
@@ -169,7 +158,7 @@ class _ResetCommand(_ICommand):
         ez_outlet.reset(post_reset_delay=self._args.reset_time)
 
 
-class _NoCommand(_ICommand):
+class _NoCommand(ICommand):
     def __init__(self, parsed_args):
         self._args = parsed_args
 
