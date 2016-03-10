@@ -39,7 +39,7 @@ EXIT_CODE_PARSER_ERR = 2
 EZ_OUTLET_RESET_DEFAULT_WAIT_TIME = ez_outlet.EzOutlet.DEFAULT_WAIT_TIME
 
 
-class TestEzOutletReset(unittest.TestCase):
+class TestMain(unittest.TestCase):
     """
     EzOutletReset.post_fail is basically all side-effects, so its test is
     rather heavy in mocks.
@@ -55,7 +55,7 @@ class TestEzOutletReset(unittest.TestCase):
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.EzOutlet')
-    def test_main_basic(self, mock_ez_outlet):
+    def test_reset_cmd(self, mock_ez_outlet):
         """
         Given: Mock EzOutlet.
         When: Calling main() with a single argument.
@@ -81,7 +81,7 @@ class TestEzOutletReset(unittest.TestCase):
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.EzOutlet')
-    def test_main_reset_time_long(self, mock_ez_outlet):
+    def test_reset_cmd_reset_time_long(self, mock_ez_outlet):
         """
         Given: Mock EzOutlet.
         When: Calling main() with hostname and --reset-time arguments.
@@ -105,7 +105,7 @@ class TestEzOutletReset(unittest.TestCase):
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.EzOutlet')
-    def test_main_reset_time_short(self, mock_ez_outlet):
+    def test_reset_cmd_reset_time_short(self, mock_ez_outlet):
         """
         Given: Mock EzOutlet.
         When: Calling main() with hostname and -t arguments.
@@ -128,7 +128,7 @@ class TestEzOutletReset(unittest.TestCase):
 
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
-    def test_main_missing_target(self):
+    def test_reset_cmd_missing_target(self):
         """
         Given: Mock EzOutlet.
         When: Calling main() with no arguments.
@@ -153,7 +153,7 @@ class TestEzOutletReset(unittest.TestCase):
                         reason="Behavior differs based on version.")
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
-    def test_main_missing_cmd_py2(self):
+    def test_missing_cmd_py2(self):
         """
         Given: Mock EzOutlet.
         When: Calling main() with no arguments.
@@ -177,7 +177,7 @@ class TestEzOutletReset(unittest.TestCase):
                         reason="Behavior differs based on version.")
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
-    def test_main_missing_cmd_py3(self):
+    def test_missing_cmd_py3(self):
         """
         Given: Mock EzOutlet.
         When: Calling main() with no arguments.
@@ -199,7 +199,7 @@ class TestEzOutletReset(unittest.TestCase):
 
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
-    def test_main_unknown_cmd(self):
+    def test_unknown_cmd(self):
         """
         Given: Mock EzOutlet.
         When: Calling main() with no arguments.
@@ -222,7 +222,7 @@ class TestEzOutletReset(unittest.TestCase):
 
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
-    def test_main_unknown_arg(self, ):
+    def test_reset_cmd_unknown_arg(self, ):
         """
         Given: Mock EzOutlet.
         When: Calling main() with required arguments and an extra unknown argument.
@@ -244,7 +244,7 @@ class TestEzOutletReset(unittest.TestCase):
 
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
-    def test_main_reset_time_negative(self):
+    def test_reset_cmd_reset_time_negative(self):
         """
         Given: Mock EzOutlet.
         When: Calling main() with hostname and negative reset time argument.

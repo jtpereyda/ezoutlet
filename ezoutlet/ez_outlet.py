@@ -235,6 +235,8 @@ def _command_factory(subcommand, parsed_args):
     if subcommand == 'reset':
         return _ResetCommand(parsed_args=parsed_args)
     else:
+        # Note: In Python 2, argparse will raise a SystemException when no
+        # command is given, so this bit is for Python 3.
         return _NoCommand(parsed_args=parsed_args)
 
 
@@ -270,7 +272,7 @@ def _handle_unexpected_error(exception):
     sys.exit(EXIT_CODE_ERR)
 
 
-def _parse_args_and_reset(argv):
+def _parse_args_and_run(argv):
     parsed_args = _parser.parse_args(argv)
     cmd = _command_factory(parsed_args.subcommand, parsed_args)
     cmd.run()
@@ -278,7 +280,7 @@ def _parse_args_and_reset(argv):
 
 def main(argv):
     try:
-        _parse_args_and_reset(argv)
+        _parse_args_and_run(argv)
     except EzOutletUsageError as e:
         _usage_error(e)
     except EzOutletError as e:
