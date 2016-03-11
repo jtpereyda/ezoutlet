@@ -1,6 +1,12 @@
 Upcoming
 ========
--  Updated release checklist
+Fixes
+-----
+-  Doc fix: README install instructions.
+
+Development
+-----------
+-  Updated release checklist.
 
 0.1.0
 =====
