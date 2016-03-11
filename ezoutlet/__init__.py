@@ -16,7 +16,7 @@ from . import parse_command
 __all__ = [ez_outlet.EzOutlet,
            exceptions.EzOutletError, exceptions.EzOutletUsageError]
 
-__version__ = '0.0.1-dev3'
+__version__ = '0.1.0'
 
 
 def main(argv):
