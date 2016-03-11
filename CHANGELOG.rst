@@ -1,3 +1,12 @@
+Upcoming
+========
+API Changes
+-----------
+-  Reset is now a subcommand:
+  ::
+
+      python -m ezoutlet reset 192.168.1.4
+
 0.0.1-dev3
 ==========
 API Changes
