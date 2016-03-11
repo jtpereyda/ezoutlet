@@ -34,37 +34,60 @@ On every pull request:
 Release Checklist
 -----------------
 
-1. Verify tests pass.
+Prep
+++++
 
-2. Use check-manifest_ to verify that no files are missing:
+1. Create release branch.
+
+2. Use :code:`git status` to verify that no superfluous files are present to be included in the source distribution.
+
+3. Use check-manifest_ to update MANIFEST.in:
+  ::
+
+      check-manifest -u
+
+4. Increment version number from last release according to PEP 0440 and roughly according to the Semantic Versioning guidelines.
+
+5. Modify CHANGELOG file:
+
+  - Update version number.
+  - Edit release notes for publication.
+
+6. Verify tests pass (continuous integration is OK for this).
+
+7. Merge release branch.
+
+Checks
+++++++
+
+1. Use check-manifest_ to verify that no files are missing:
   ::
 
       check-manifest
 
-3. Use :code:`git status` to verify that no superfluous files are present to be included in the source distribution.
+2. Use :code:`git status` to verify that no superfluous files are present to be included in the source distribution.
 
-4. Increment version number from last release according to PEP 0440 and roughly according to the Semantic Versioning guidelines.
-
-5. Modify CHANGELOG file to reflect new version number.
-
-6. Build distributions:
+3. Build distributions:
   ::
 
       python setup.py sdist bdist_wheel
 
-7. Visually inspect source distribution for correctness.
+4. Visually inspect wheel distribution for correctness.
 
-8. Upload to testpypi if changes impact PyPI (e.g., if README changed):
+Release
++++++++
+
+1. Upload to testpypi if changes impact PyPI (e.g., if README changed):
   ::
 
       twine upload -r test  dist\ezoutlet-x.y.z-py2-none-any.whl dist\ezoutlet-0.0.1-dev3.zip
 
 
-9. Upload to pypi:
+2. Upload to pypi:
   ::
 
       twine upload dist\ezoutlet-x.y.z-py2-none-any.whl dist\ezoutlet-0.0.1-dev3.zip
 
 .. _check-manifest: https://pypi.python.org/pypi/check-manifest
 
-10. Create accompanying release on GitHub.
+3. Create accompanying release on GitHub.
