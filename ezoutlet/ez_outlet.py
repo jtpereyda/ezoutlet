@@ -2,53 +2,26 @@
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 
+from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 from future.utils import raise_
 
-import argparse
-import os
 import sys
 import time
-import traceback
+
 try:
+    # Python 2
     import urlparse
 except ImportError:
+    # Python 3
+    # noinspection PyUnresolvedReferences
     import urllib.parse as urlparse
 
 import requests
 
-_DEFAULT_EZ_OUTLET_RESET_INTERVAL = 3.05
-
-HELP_TEXT = (
-    """Send reset command to ezOutlet EZ-11b device; wait for on/off cycle.
-
-    Use --reset-time to wait additional time, e.g. for device reboot."""
-)
-PROGRAM_NAME = os.path.basename(__file__)
-RESET_TIME_ARG_SHORT = '-t'
-RESET_TIME_ARG_LONG = '--reset-time'
-
-HELP_TEXT_TARGET_ARG = 'IP address/hostname of ezOutlet device.'
-HELP_TEXT_RESET_TIME_ARG = 'Extra time in seconds to wait, e.g. for device reboot.' \
-                           ' Note that the script already waits {0} seconds for the' \
-                           ' ezOutlet to turn off and on.'.format(_DEFAULT_EZ_OUTLET_RESET_INTERVAL)
-
-ERROR_STRING = "{0}: error: {1}"
-UNHANDLED_ERROR_MESSAGE = "Unhandled exception! Please file bug report.\n\n{0}"
-RESET_TIME_NEGATIVE_ERROR_MESSAGE = "argument{0}/{1}: value must be non-negative.".format(RESET_TIME_ARG_LONG,
-                                                                                          RESET_TIME_ARG_SHORT)
-
-EXIT_CODE_ERR = 1
-EXIT_CODE_PARSER_ERR = 2
-
-
-class EzOutletError(Exception):
-    pass
-
-
-class EzOutletUsageError(EzOutletError):
-    pass
+from . import constants
+from . import exceptions
 
 
 def _get_url(hostname, path):
@@ -66,7 +39,7 @@ class EzOutlet:
 
     It uses undocumented but simple CGI scripts.
     """
-    DEFAULT_EZ_OUTLET_RESET_INTERVAL = _DEFAULT_EZ_OUTLET_RESET_INTERVAL
+    DEFAULT_EZ_OUTLET_RESET_INTERVAL = constants.DEFAULT_EZ_OUTLET_RESET_INTERVAL
     DEFAULT_TIMEOUT = 10
     DEFAULT_WAIT_TIME = 0
     RESET_URL_PATH = '/reset.cgi'
@@ -140,9 +113,10 @@ class EzOutlet:
                                 timeout=self._timeout,
                                 proxies={"http": None, "https": None}).text
         except requests.exceptions.ConnectTimeout:
-            raise_(EzOutletError(self.NO_RESPONSE_MSG.format(self._timeout)),
-                   None,
-                   sys.exc_info()[2])
+            raise_(exceptions.EzOutletError(
+                self.NO_RESPONSE_MSG.format(self._timeout)),
+                None,
+                sys.exc_info()[2])
 
     def _check_response_raise_if_unexpected(self, response):
         """Raise if response is unexpected.
@@ -158,7 +132,8 @@ class EzOutlet:
                   EzOutletReset.EXPECTED_RESPONSE_CONTENTS)
         """
         if response != self.EXPECTED_RESPONSE_CONTENTS:
-            raise EzOutletError(self.UNEXPECTED_RESPONSE_MSG.format(response))
+            raise exceptions.EzOutletError(
+                self.UNEXPECTED_RESPONSE_MSG.format(response))
 
     @staticmethod
     def _wait_for_reset(total_delay):
@@ -167,76 +142,3 @@ class EzOutlet:
         Returns: None
         """
         time.sleep(total_delay)
-
-
-class _Parser(object):
-    def __init__(self):
-        self._parser = argparse.ArgumentParser(description=HELP_TEXT)
-        self._parser.add_argument('target', help=HELP_TEXT_TARGET_ARG)
-        self._parser.add_argument(RESET_TIME_ARG_LONG, RESET_TIME_ARG_SHORT,
-                                  type=float,
-                                  default=0,
-                                  help=HELP_TEXT_RESET_TIME_ARG)
-
-    def get_usage(self):
-        return self._parser.format_usage()
-
-    def parse_args(self, argv):
-        parsed_args = self._parser.parse_args(argv[1:])
-
-        self._check_args(parsed_args)
-
-        return parsed_args
-
-    @staticmethod
-    def _check_args(parsed_args):
-        if parsed_args.reset_time < 0:
-            raise EzOutletUsageError(RESET_TIME_NEGATIVE_ERROR_MESSAGE)
-
-_parser = _Parser()
-
-
-def _print_usage():
-    print(_parser.get_usage(), file=sys.stderr)
-
-
-def _print_error(msg):
-    print(ERROR_STRING.format(PROGRAM_NAME, msg), file=sys.stderr)
-
-
-def _usage_error(exception):
-    _print_usage()
-    _print_error(msg=exception)
-    sys.exit(EXIT_CODE_PARSER_ERR)
-
-
-def _handle_error(exception):
-    _print_error(msg=exception)
-    sys.exit(EXIT_CODE_ERR)
-
-
-def _handle_unexpected_error(exception):
-    _ = exception  # exception gets printed by traceback.format_exc()
-    _print_error(msg=UNHANDLED_ERROR_MESSAGE.format(traceback.format_exc()))
-    sys.exit(EXIT_CODE_ERR)
-
-
-def _parse_args_and_reset(argv):
-    parsed_args = _parser.parse_args(argv)
-    ez_outlet = EzOutlet(hostname=parsed_args.target)
-    ez_outlet.reset(post_reset_delay=parsed_args.reset_time)
-
-
-def main(argv):
-    try:
-        _parse_args_and_reset(argv)
-    except EzOutletUsageError as e:
-        _usage_error(e)
-    except EzOutletError as e:
-        _handle_error(e)
-    except Exception as e:
-        _handle_unexpected_error(e)
-
-
-if __name__ == "__main__":
-    main(sys.argv)
