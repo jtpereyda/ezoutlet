@@ -7,7 +7,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from .icommand import ICommand
-from .parser import print_help
+from . import parser
 
 
 class NoCommand(ICommand):
@@ -15,4 +15,4 @@ class NoCommand(ICommand):
         self._args = parsed_args
 
     def run(self):
-        print_help()
+        parser.print_help()

@@ -12,6 +12,18 @@ import sys
 from . import constants
 
 
+def print_error(msg):
+    print(constants.ERROR_STRING.format(constants.PROGRAM_NAME, msg), file=sys.stderr)
+
+
+def print_help():
+    print(static_parser.get_help(), file=sys.stderr)
+
+
+def print_usage():
+    print(static_parser.get_usage(), file=sys.stderr)
+
+
 class Parser(object):
     def __init__(self):
         self._parser = argparse.ArgumentParser(description=constants.HELP_TEXT)
@@ -39,12 +51,4 @@ class Parser(object):
         return self._parser.parse_args(argv[1:])
 
 
-def print_help():
-    print(static_parser.get_help(), file=sys.stderr)
-
-
 static_parser = Parser()
-
-
-def print_usage():
-    print(static_parser.get_usage(), file=sys.stderr)
