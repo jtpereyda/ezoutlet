@@ -11,8 +11,11 @@ import sys
 import time
 
 try:
+    # Python 2
     import urlparse
 except ImportError:
+    # Python 3
+    # noinspection PyUnresolvedReferences
     import urllib.parse as urlparse
 
 import requests
