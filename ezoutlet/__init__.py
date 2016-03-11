@@ -9,8 +9,9 @@ from __future__ import unicode_literals
 import sys
 import traceback
 
-from . import parser
+from .parse_command import parse_command
 from . import constants
+from . import parser
 from .exceptions import EzOutletError, EzOutletUsageError
 from .ez_outlet import EzOutlet
 from .no_command import NoCommand
@@ -19,18 +20,9 @@ from .reset_command import ResetCommand
 __version__ = '0.0.1-dev3'
 
 
-def _command_factory(subcommand, parsed_args):
-    if subcommand == 'reset':
-        return ResetCommand(parsed_args=parsed_args)
-    else:
-        # Note: In Python 2, argparse will raise a SystemException when no
-        # command is given, so this bit is for Python 3.
-        return NoCommand(parsed_args=parsed_args)
-
-
 def _parse_args_and_run(argv):
     parsed_args = parser.static_parser.parse_args(argv)
-    cmd = _command_factory(parsed_args.subcommand, parsed_args)
+    cmd = parse_command(parsed_args.subcommand, parsed_args)
     cmd.run()
 
 
