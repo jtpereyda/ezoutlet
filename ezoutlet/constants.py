@@ -11,6 +11,7 @@ import os
 PROGRAM_NAME = os.path.basename(__file__)
 
 DEFAULT_EZ_OUTLET_RESET_INTERVAL = 3.05
+EXIT_CODE_OK = 0
 EXIT_CODE_ERR = 1
 EXIT_CODE_PARSER_ERR = 2
 

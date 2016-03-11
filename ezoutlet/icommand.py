@@ -17,4 +17,6 @@ class ICommand(object):
     """
     @abc.abstractmethod
     def run(self):
-        """ Run the command. """
+        """ Run the command. Returns exit code.
+        :rtype: int
+        """

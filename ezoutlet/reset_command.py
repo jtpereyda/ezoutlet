@@ -24,3 +24,4 @@ class ResetCommand(ICommand):
     def run(self):
         ez = ez_outlet.EzOutlet(hostname=self._args.target)
         ez.reset(post_reset_delay=self._args.reset_time)
+        return constants.EXIT_CODE_OK

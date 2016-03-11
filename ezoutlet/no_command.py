@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 
 from .icommand import ICommand
 from . import parser
+from . import constants
 
 
 class NoCommand(ICommand):
@@ -16,3 +17,4 @@ class NoCommand(ICommand):
 
     def run(self):
         parser.print_help()
+        return constants.EXIT_CODE_PARSER_ERR

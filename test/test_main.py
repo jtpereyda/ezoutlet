@@ -2,6 +2,7 @@
 # This software may be modified and distributed under the terms
 # of the MIT license.  See the LICENSE file for details.
 
+from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
@@ -143,10 +144,9 @@ class TestMain(unittest.TestCase):
         """
         args = ['ez_outlet.py', 'reset']
 
-        with pytest.raises(SystemExit) as exception_info:
-            ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
-        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
+        assert exit_code == EXIT_CODE_PARSER_ERR
 
         # Error message differs between Python 2 and 3 versions of argparse
         assert re.search(".*: (error: too few arguments|the following arguments are required:)",
@@ -168,10 +168,9 @@ class TestMain(unittest.TestCase):
         """
         args = ['ez_outlet.py']
 
-        with pytest.raises(SystemExit) as exception_info:
-            ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
-        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
+        assert exit_code == EXIT_CODE_PARSER_ERR
 
         assert re.search(".*: (error: too few arguments)",
                          ez_outlet.sys.stderr.getvalue()) is not None
@@ -192,7 +191,9 @@ class TestMain(unittest.TestCase):
         """
         args = ['ez_outlet.py']
 
-        ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
+
+        assert exit_code == EXIT_CODE_PARSER_ERR
 
         err_msg = ez_outlet.sys.stderr.getvalue()
 
@@ -214,10 +215,9 @@ class TestMain(unittest.TestCase):
         """
         args = ['ez_outlet.py', 'someUnknownCommand']
 
-        with pytest.raises(SystemExit) as exception_info:
-            ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
-        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
+        assert exit_code == EXIT_CODE_PARSER_ERR
 
         # Error message differs between Python 2 and 3 versions of argparse
         assert re.search(".*: (error: argument subcommand: invalid choice:)",
@@ -238,10 +238,9 @@ class TestMain(unittest.TestCase):
         bad_arg = '--blab'
         args = ['ez_outlet.py', 'reset', '1.2.3.4', bad_arg]
 
-        with pytest.raises(SystemExit) as exception_info:
-            ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
-        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
+        assert exit_code == EXIT_CODE_PARSER_ERR
 
         assert re.search(".*: error: unrecognized arguments: {0}".format(bad_arg),
                          ez_outlet.sys.stderr.getvalue()) is not None
@@ -260,10 +259,9 @@ class TestMain(unittest.TestCase):
         """
         args = ['ez_outlet.py', 'reset', '1.2.3.4', ezoutlet.constants.RESET_TIME_ARG_LONG, str(-1)]
 
-        with pytest.raises(SystemExit) as exception_info:
-            ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
-        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
+        assert exit_code == EXIT_CODE_PARSER_ERR
 
         assert re.search(ezoutlet.constants.ERROR_STRING.format(ezoutlet.constants.PROGRAM_NAME,
                                                                 ezoutlet.constants.RESET_TIME_NEGATIVE_ERROR_MESSAGE),
@@ -289,12 +287,9 @@ class TestMain(unittest.TestCase):
         """
         args = ['ez_outlet.py', 'reset', '1.2.3.4']
 
-        # When
-        with pytest.raises(SystemExit) as exception_info:
-            ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
-        # Then
-        assert exception_info.value.code == EXIT_CODE_PARSER_ERR
+        assert exit_code == EXIT_CODE_PARSER_ERR
 
         assert re.search(ezoutlet.constants.ERROR_STRING.format(ezoutlet.constants.PROGRAM_NAME, self.arbitrary_msg_1),
                          ez_outlet.sys.stderr.getvalue()) is not None
@@ -322,11 +317,10 @@ class TestMain(unittest.TestCase):
         args = ['ez_outlet.py', 'reset', '1.2.3.4']
 
         # When
-        with pytest.raises(SystemExit) as exception_info:
-            ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
         # Then
-        assert exception_info.value.code == EXIT_CODE_ERR
+        assert exit_code == EXIT_CODE_ERR
 
         assert re.search(ezoutlet.constants.ERROR_STRING.format(ezoutlet.constants.PROGRAM_NAME, self.arbitrary_msg_2),
                          ez_outlet.sys.stderr.getvalue()) is not None
@@ -356,11 +350,10 @@ class TestMain(unittest.TestCase):
         args = ['ez_outlet.py', 'reset', '1.2.3.4']
 
         # When
-        with pytest.raises(SystemExit) as exception_info:
-            ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
         # Then
-        assert exception_info.value.code == EXIT_CODE_ERR
+        assert exit_code == EXIT_CODE_ERR
 
         assert re.search(ezoutlet.constants.ERROR_STRING.format(ezoutlet.constants.PROGRAM_NAME,
                                                                 ezoutlet.constants.UNHANDLED_ERROR_MESSAGE.format(
