@@ -1,3 +1,7 @@
+Upcoming
+========
+-  Updated release checklist
+
 0.1.0
 =====
 API Changes
