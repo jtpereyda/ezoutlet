@@ -1,6 +1,17 @@
-0.0.1-devX
-==========
+Upcoming
+========
 -  Updated release checklist
+
+0.1.0
+=====
+API Changes
+-----------
+-  Reset is now a subcommand:
+   ::
+
+      python -m ezoutlet reset 192.168.1.4
+
+   This allows the future addition of multiple commands.
 
 0.0.1-dev3
 ==========
