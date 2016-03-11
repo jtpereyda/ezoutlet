@@ -31,15 +31,7 @@ class Parser(object):
         # self._parser.add_argument(RESET_TIME_ARG_LONG, RESET_TIME_ARG_SHORT,
         subparsers = self._parser.add_subparsers(dest='subcommand')
 
-        self._add_reset_parser(subparsers)
-
-    def _add_reset_parser(self, subparsers):
-        parser_reset = subparsers.add_parser('reset', help='TODO reset help text')
-        parser_reset.add_argument('target', help=constants.HELP_TEXT_TARGET_ARG)
-        parser_reset.add_argument(constants.RESET_TIME_ARG_LONG, constants.RESET_TIME_ARG_SHORT,
-                                  type=float,
-                                  default=0,
-                                  help=constants.HELP_TEXT_RESET_TIME_ARG)
+        _add_reset_parser(subparsers)
 
     def get_usage(self):
         return self._parser.format_usage()
@@ -50,5 +42,13 @@ class Parser(object):
     def parse_args(self, argv):
         return self._parser.parse_args(argv[1:])
 
+
+def _add_reset_parser(subparsers):
+    parser_reset = subparsers.add_parser('reset', help='TODO reset help text')
+    parser_reset.add_argument('target', help=constants.HELP_TEXT_TARGET_ARG)
+    parser_reset.add_argument(constants.RESET_TIME_ARG_LONG, constants.RESET_TIME_ARG_SHORT,
+                              type=float,
+                              default=0,
+                              help=constants.HELP_TEXT_RESET_TIME_ARG)
 
 static_parser = Parser()
