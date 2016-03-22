@@ -6,13 +6,12 @@ Features
 
 Fixes
 -----
--  Doc fix: README install and usage instructions.
+-  Doc fixes: README install and usage instructions; help text.
 
 Development
 -----------
 -  Updated release checklist.
--  Cleaned .gitignore.
--  Minor cleanup refactoring.
+-  Cleaned .gitignore, unit tests, etc.
 
 0.1.0
 =====
