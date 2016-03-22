@@ -134,7 +134,7 @@ class TestMainReset(unittest.TestCase):
         """
         Given: Mock EzOutlet.
         When: Calling main() with no arguments.
-        Then: SystemExit is raised with code EXIT_CODE_PARSER_ERR
+        Then: EXIT_CODE_PARSER_ERR is returned
          and: STDERR includes ".*: error: too few arguments"
          and: STDOUT is silent.
         """
@@ -156,7 +156,7 @@ class TestMainReset(unittest.TestCase):
         """
         Given: Mock EzOutlet.
         When: Calling main() with required arguments and an extra unknown argument.
-        Then: SystemExit is raised with code EXIT_CODE_PARSER_ERR
+        Then: EXIT_CODE_PARSER_ERR is returned
          and: STDERR <= ".*: error: unrecognized arguments: {0}".format(bad_arg)
          and: STDOUT is silent.
         """
@@ -177,7 +177,7 @@ class TestMainReset(unittest.TestCase):
         """
         Given: Mock EzOutlet.
         When: Calling main() with hostname and negative reset time argument.
-        Then: SystemExit is raised with code EXIT_CODE_PARSER_ERR
+        Then: EXIT_CODE_PARSER_ERR is returned
          and: STDERR <= ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME,
                                                       ez_outlet.RESET_TIME_NEGATIVE_ERROR_MESSAGE)
          and: STDOUT is silent.
@@ -205,7 +205,7 @@ class TestMainReset(unittest.TestCase):
                parse_args().
           and: Mock STDERR, STDOUT.
          When: Calling main().
-         Then: SystemExit is raised with code EXIT_CODE_PARSER_ERR
+         Then: EXIT_CODE_PARSER_ERR is returned
           and: STDERR <= ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME, self.arbitrary_msg_1)
           and: STDOUT is silent.
           and: Mock ez_outlet._Parser.parse_args() was called.
@@ -234,7 +234,7 @@ class TestMainReset(unittest.TestCase):
                EzOutletError on reset().
           and: Mock STDERR, STDOUT.
          When: Calling main().
-         Then: SystemExit is raised with code EXIT_CODE_ERR
+         Then: EXIT_CODE_ERR is returned
           and: STDERR <= ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME, self.arbitrary_msg_2)
           and: STDOUT is silent.
           and: Mock ez_outlet.EzOutlet.reset() was called.
@@ -265,7 +265,7 @@ class TestMainReset(unittest.TestCase):
                Exception on reset().
           and: Mock STDERR, STDOUT.
          When: Calling main().
-         Then: SystemExit is raised with code EXIT_CODE_ERR
+         Then: EXIT_CODE_ERR is returned
           and: STDERR <= ez_outlet.ERROR_STRING.format(ez_outlet.PROGRAM_NAME,
                                                        ez_outlet.UNHANDLED_ERROR_MESSAGE.format(
                                                                  "Traceback.*{0}.*".format(self.arbitrary_msg_2)))
@@ -324,7 +324,7 @@ class TestMainNoCommand(unittest.TestCase):
         """
         Given: Mock EzOutlet.
         When: Calling main() with no arguments.
-        Then: SystemExit is raised with code EXIT_CODE_PARSER_ERR
+        Then: EXIT_CODE_PARSER_ERR is returned
          and: STDERR includes ".*: error: too few arguments"
          and: STDOUT is silent.
         """
@@ -347,7 +347,7 @@ class TestMainNoCommand(unittest.TestCase):
         """
         Given: Mock EzOutlet.
         When: Calling main() with no arguments.
-        Then: SystemExit is raised with code EXIT_CODE_PARSER_ERR
+        Then: EXIT_CODE_PARSER_ERR is returned
          and: STDERR includes ".*: error: too few arguments"
          and: STDOUT is silent.
         """
@@ -371,7 +371,7 @@ class TestMainNoCommand(unittest.TestCase):
         """
         Given: Mock EzOutlet.
         When: Calling main() with no arguments.
-        Then: SystemExit is raised with code EXIT_CODE_PARSER_ERR
+        Then: EXIT_CODE_PARSER_ERR is returned
          and: STDERR includes ".*: error: argument subcommand: invalid choice:"
          and: STDOUT is silent.
         """
