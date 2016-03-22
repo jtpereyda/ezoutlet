@@ -23,5 +23,5 @@ Usage
 
 ::
 
-    python -m ezoutlet 192.168.1.12  # -t 10  # wait 10 seconds after reset
+    python -m ezoutlet reset 192.168.1.12  # -t 10  # wait 10 seconds after reset
 
