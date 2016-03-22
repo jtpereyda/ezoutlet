@@ -66,11 +66,12 @@ class TestMainReset(unittest.TestCase):
          and: EzOutlet.reset is called
          and: STDOUT is silent.
          and: STDERR is silent.
+         and: EXIT_CODE_OK is returned
         """
         hostname = '255.254.253.252'
         args = ['ez_outlet.py', 'reset', hostname]
 
-        ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
         mock_ez_outlet.assert_called_once_with(hostname=hostname)
         # Duplicate reference to DEFAULT_WAIT_TIME needed because
@@ -79,6 +80,7 @@ class TestMainReset(unittest.TestCase):
             post_reset_delay=EZ_OUTLET_RESET_DEFAULT_WAIT_TIME)
         assert ez_outlet.sys.stdout.getvalue() == ''
         assert ez_outlet.sys.stderr.getvalue() == ''
+        assert exit_code == EXIT_CODE_OK
 
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
@@ -92,17 +94,19 @@ class TestMainReset(unittest.TestCase):
          and: EzOutlet.reset is called
          and: STDOUT is silent.
          and: STDERR is silent.
+         and: EXIT_CODE_OK is returned
         """
         hostname = '255.254.253.252'
         wait_time = 77
         args = ['ez_outlet.py', 'reset', hostname, ezoutlet.constants.RESET_TIME_ARG_LONG, str(wait_time)]
 
-        ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
         mock_ez_outlet.assert_called_once_with(hostname=hostname)
         mock_ez_outlet.return_value.reset.assert_called_once_with(post_reset_delay=wait_time)
         assert ez_outlet.sys.stdout.getvalue() == ''
         assert ez_outlet.sys.stderr.getvalue() == ''
+        assert exit_code == EXIT_CODE_OK
 
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=io.StringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=io.StringIO())
@@ -116,17 +120,19 @@ class TestMainReset(unittest.TestCase):
          and: EzOutlet.reset is called
          and: STDOUT is silent.
          and: STDERR is silent.
+         and: EXIT_CODE_OK is returned
         """
         hostname = '255.254.253.252'
         wait_time = 1
         args = ['ez_outlet.py', 'reset', hostname, ezoutlet.constants.RESET_TIME_ARG_SHORT, str(wait_time)]
 
-        ezoutlet.main(args)
+        exit_code = ezoutlet.main(args)
 
         mock_ez_outlet.assert_called_once_with(hostname=hostname)
         mock_ez_outlet.return_value.reset.assert_called_once_with(post_reset_delay=wait_time)
         assert ez_outlet.sys.stdout.getvalue() == ''
         assert ez_outlet.sys.stderr.getvalue() == ''
+        assert exit_code == EXIT_CODE_OK
 
     @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
     @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
