@@ -314,27 +314,6 @@ class TestMainVersion(unittest.TestCase):
 
         assert ez_outlet.sys.stderr.getvalue() == ''
 
-    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
-    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
-    def test_version_option(self):
-        """
-        Given Nothing
-        When Calling main() with '--version' argument
-        Then EXIT_CODE_OK is returned
-         and Application name and version are printed on STDOUT
-         and STDERR is quiet
-        """
-        args = ['ez_outlet.py', '--version']
-
-        exit_code = ezoutlet.main(args)
-
-        assert exit_code == EXIT_CODE_OK
-
-        assert re.match('\s*{0} {1}\s*'.format('ezoutlet', ezoutlet.__version__),
-                        ez_outlet.sys.stdout.getvalue())
-
-        assert ez_outlet.sys.stderr.getvalue() == ''
-
 
 class TestMainNoCommand(unittest.TestCase):
     @pytest.mark.skipif(sys.version_info >= (3, 3),
