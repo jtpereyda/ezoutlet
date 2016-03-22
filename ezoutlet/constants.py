@@ -26,10 +26,9 @@ RESET_TIME_ARG_LONG = '--reset-time'
 
 # Help strings
 HELP_TEXT = (
-    """Send reset command to ezOutlet EZ-11b device; wait for on/off cycle.
-
-    Use --reset-time to wait additional time, e.g. for device reboot."""
+    """Control an ezOutlet EZ-11b device."""
 )
+HELP_TEXT_RESET = "Send reset command; wait for on/off cycle."
 HELP_TEXT_VERSION = "Print version"
 HELP_TEXT_TARGET_ARG = 'IP address/hostname of ezOutlet device.'
 HELP_TEXT_RESET_TIME_ARG = 'Extra time in seconds to wait, e.g. for device reboot.' \
