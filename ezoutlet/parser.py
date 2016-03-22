@@ -32,6 +32,7 @@ class Parser(object):
         subparsers = self._parser.add_subparsers(dest='subcommand')
 
         _add_reset_parser(subparsers)
+        _add_version_parser(subparsers)
 
     def get_usage(self):
         return self._parser.format_usage()
@@ -50,5 +51,10 @@ def _add_reset_parser(subparsers):
                               type=float,
                               default=0,
                               help=constants.HELP_TEXT_RESET_TIME_ARG)
+
+
+def _add_version_parser(subparsers):
+    subparsers.add_parser('version', help=constants.HELP_TEXT_VERSION)
+
 
 static_parser = Parser()

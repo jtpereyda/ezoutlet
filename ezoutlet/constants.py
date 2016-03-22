@@ -6,9 +6,14 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from . import __version__
+from . import __name__ as package_name
+
 import os
 
 PROGRAM_NAME = os.path.basename(__file__)
+VERSION_FORMAT_STRING = package_name + ' {0}'
+VERSION_STRING = VERSION_FORMAT_STRING.format(__version__)
 
 DEFAULT_EZ_OUTLET_RESET_INTERVAL = 3.05
 EXIT_CODE_OK = 0
@@ -25,6 +30,7 @@ HELP_TEXT = (
 
     Use --reset-time to wait additional time, e.g. for device reboot."""
 )
+HELP_TEXT_VERSION = "Print version"
 HELP_TEXT_TARGET_ARG = 'IP address/hostname of ezOutlet device.'
 HELP_TEXT_RESET_TIME_ARG = 'Extra time in seconds to wait, e.g. for device reboot.' \
                            ' Note that the script already waits {0} seconds for the' \
