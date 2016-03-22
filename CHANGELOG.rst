@@ -7,6 +7,7 @@ Fixes
 Development
 -----------
 -  Updated release checklist.
+-  Cleaned .gitignore.
 
 0.1.0
 =====
