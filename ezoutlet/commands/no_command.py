@@ -7,8 +7,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from .icommand import ICommand
-from . import parser
-from . import constants
+from .. import parser
+from .. import constants
 
 
 class NoCommand(ICommand):

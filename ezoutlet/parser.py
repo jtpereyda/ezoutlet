@@ -27,11 +27,10 @@ def print_usage():
 class Parser(object):
     def __init__(self):
         self._parser = argparse.ArgumentParser(description=constants.HELP_TEXT)
-        # self._parser.add_argument('target', help=HELP_TEXT_TARGET_ARG)
-        # self._parser.add_argument(RESET_TIME_ARG_LONG, RESET_TIME_ARG_SHORT,
         subparsers = self._parser.add_subparsers(dest='subcommand')
 
         _add_reset_parser(subparsers)
+        _add_version_parser(subparsers)
 
     def get_usage(self):
         return self._parser.format_usage()
@@ -44,11 +43,16 @@ class Parser(object):
 
 
 def _add_reset_parser(subparsers):
-    parser_reset = subparsers.add_parser('reset', help='TODO reset help text')
+    parser_reset = subparsers.add_parser('reset', help=constants.HELP_TEXT_RESET)
     parser_reset.add_argument('target', help=constants.HELP_TEXT_TARGET_ARG)
     parser_reset.add_argument(constants.RESET_TIME_ARG_LONG, constants.RESET_TIME_ARG_SHORT,
                               type=float,
                               default=0,
                               help=constants.HELP_TEXT_RESET_TIME_ARG)
+
+
+def _add_version_parser(subparsers):
+    subparsers.add_parser('version', help=constants.HELP_TEXT_VERSION)
+
 
 static_parser = Parser()

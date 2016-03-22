@@ -6,22 +6,19 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from . import exceptions
-from . import constants
-from . import ez_outlet
+from .. import constants
 from .icommand import ICommand
 
 
-class ResetCommand(ICommand):
+class VersionCommand(ICommand):
     def __init__(self, parsed_args):
         self._args = parsed_args
         self._check_args()
 
     def _check_args(self):
-        if self._args.reset_time < 0:
-            raise exceptions.EzOutletUsageError(constants.RESET_TIME_NEGATIVE_ERROR_MESSAGE)
+        # version command accepts anything
+        pass
 
     def run(self):
-        ez = ez_outlet.EzOutlet(hostname=self._args.target)
-        ez.reset(post_reset_delay=self._args.reset_time)
+        print(constants.VERSION_STRING)
         return constants.EXIT_CODE_OK

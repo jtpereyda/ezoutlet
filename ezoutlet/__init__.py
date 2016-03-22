@@ -6,17 +6,17 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+__version__ = '0.1.0'
+
 from . import constants
 from . import error_handling
 from . import exceptions
 from . import ez_outlet
 from . import parser
-from . import parse_command
+from .commands import parse_command
 
 __all__ = [ez_outlet.EzOutlet,
            exceptions.EzOutletError, exceptions.EzOutletUsageError]
-
-__version__ = '0.1.0'
 
 
 def main(argv):
