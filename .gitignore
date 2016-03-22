@@ -9,6 +9,3 @@ dist/
 
 # Test tools
 .tox/
-
-# IDEs
-.idea/*
