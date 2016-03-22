@@ -1,5 +1,9 @@
 Upcoming
 ========
+Features
+--------
+-  Added version command.
+
 Fixes
 -----
 -  Doc fix: README install and usage instructions.
@@ -8,6 +12,7 @@ Development
 -----------
 -  Updated release checklist.
 -  Cleaned .gitignore.
+-  Minor cleanup refactoring.
 
 0.1.0
 =====
