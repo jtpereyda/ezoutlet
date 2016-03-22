@@ -6,19 +6,15 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from . import constants
 from .icommand import ICommand
+from ezoutlet import parser
+from ezoutlet import constants
 
 
-class VersionCommand(ICommand):
+class NoCommand(ICommand):
     def __init__(self, parsed_args):
         self._args = parsed_args
-        self._check_args()
-
-    def _check_args(self):
-        # version command accepts anything
-        pass
 
     def run(self):
-        print(constants.VERSION_STRING)
-        return constants.EXIT_CODE_OK
+        parser.print_help()
+        return constants.EXIT_CODE_PARSER_ERR

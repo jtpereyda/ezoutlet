@@ -13,7 +13,7 @@ from . import error_handling
 from . import exceptions
 from . import ez_outlet
 from . import parser
-from . import parse_command
+from .commands import parse_command
 
 __all__ = [ez_outlet.EzOutlet,
            exceptions.EzOutletError, exceptions.EzOutletUsageError]
