@@ -3,3 +3,4 @@ include *.rst
 include *.txt
 include tox.ini
 recursive-include test *.py
+recursive-include ezoutlet *.py
