@@ -40,6 +40,7 @@ import pytest
 
 from ezoutlet import ez_outlet
 
+EXIT_CODE_OK = 0
 EXIT_CODE_ERR = 1
 EXIT_CODE_PARSER_ERR = 2
 EZ_OUTLET_RESET_DEFAULT_WAIT_TIME = ez_outlet.EzOutlet.DEFAULT_WAIT_TIME
@@ -288,6 +289,30 @@ class TestMainReset(unittest.TestCase):
         assert ez_outlet.sys.stdout.getvalue() == ''
 
         mock_ez_outlet.assert_called_with(post_reset_delay=ez_outlet.EzOutlet.DEFAULT_WAIT_TIME)
+
+
+class TestMainVersion(unittest.TestCase):
+
+    @mock.patch('ezoutlet.ez_outlet.sys.stdout', new=Py23FlexibleStringIO())
+    @mock.patch('ezoutlet.ez_outlet.sys.stderr', new=Py23FlexibleStringIO())
+    def test_version_command(self):
+        """
+        Given Nothing
+        When Calling main() with 'version' argument
+        Then EXIT_CODE_OK is returned
+         and Application name and version are printed on STDOUT
+         and STDERR is quiet
+        """
+        args = ['ez_outlet.py', 'version']
+
+        exit_code = ezoutlet.main(args)
+
+        assert exit_code == EXIT_CODE_OK
+
+        assert re.match('\s*{0} {1}\s*'.format('ezoutlet', ezoutlet.__version__),
+                        ez_outlet.sys.stdout.getvalue())
+
+        assert ez_outlet.sys.stderr.getvalue() == ''
 
 
 class TestMainNoCommand(unittest.TestCase):
