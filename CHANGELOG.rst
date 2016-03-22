@@ -2,7 +2,7 @@ Upcoming
 ========
 Fixes
 -----
--  Doc fix: README install instructions.
+-  Doc fix: README install and usage instructions.
 
 Development
 -----------
