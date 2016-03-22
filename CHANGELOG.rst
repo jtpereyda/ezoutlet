@@ -1,5 +1,5 @@
-Upcoming
-========
+1.0
+===
 Features
 --------
 -  Added version command.
