@@ -16,7 +16,7 @@ Install
 
 ::
 
-    pip install --pre ezoutlet
+    pip install ezoutlet
 
 Usage
 -----
