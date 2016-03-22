@@ -8,7 +8,7 @@ import ast
 import os
 import re
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -28,31 +28,31 @@ def find_version(*path_elements):
 
 
 setup(
-        name='ezoutlet',
-        version=find_version("ezoutlet", "__init__.py"),
-        maintainer='Joshua Pereyda',
-        maintainer_email='joshua.t.pereyda@gmail.com',
-        url='https://github.com/jtpereyda/ezoutlet',
-        description='Command line tool and Python API for ezOutlet EZ-11b',
-        license='MIT',
-        packages=['ezoutlet'],
-        install_requires=['future', 'requests'],
-        extras_require={
-            # This list is duplicated in tox.ini. Make sure to change both!
-            # This can stop once tox supports installing package extras.
-            'dev': ['mock', 'pytest'],
-        },
-        classifiers=[
-            'Development Status :: 4 - Beta',
-            'Environment :: Console',
-            'Intended Audience :: Developers',
-            'Intended Audience :: Science/Research',
-            'License :: OSI Approved :: MIT License',
-            'Natural Language :: English',
-            'Operating System :: OS Independent',
-            'Programming Language :: Python',
-            'Programming Language :: Python :: 2.7',
-            'Topic :: Security',
-            'Topic :: Software Development :: Testing :: Traffic Generation',
-        ]
+    name='ezoutlet',
+    version=find_version("ezoutlet", "__init__.py"),
+    maintainer='Joshua Pereyda',
+    maintainer_email='joshua.t.pereyda@gmail.com',
+    url='https://github.com/jtpereyda/ezoutlet',
+    description='Command line tool and Python API for ezOutlet EZ-11b',
+    license='MIT',
+    packages=find_packages(exclude=['test']),
+    install_requires=['future', 'requests'],
+    extras_require={
+        # This list is duplicated in tox.ini. Make sure to change both!
+        # This can stop once tox supports installing package extras.
+        'dev': ['mock', 'pytest'],
+    },
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2.7',
+        'Topic :: Security',
+        'Topic :: Software Development :: Testing :: Traffic Generation',
+    ]
 )
