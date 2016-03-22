@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-__version__ = '0.1.0'
+__version__ = '1.0'
 
 from . import constants
 from . import error_handling
