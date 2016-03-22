@@ -6,9 +6,9 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ezoutlet import exceptions
-from ezoutlet import constants
-from ezoutlet import ez_outlet
+from .. import exceptions
+from .. import constants
+from .. import ez_outlet
 from .icommand import ICommand
 
 
