@@ -1,3 +1,9 @@
+Upcoming
+========
+Development
+-----------
+-  Documentation fixes: tox.ini
+
 1.0
 ===
 Features
